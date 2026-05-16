@@ -152,41 +152,45 @@ tbody tr:last-child td{border-bottom:none}
 <!-- ADMIN LINK -->
 <div class="admin-link">⚙️ Admin? <a href="admin.html">Login here</a></div>
 
-<!-- Firebase REST API - no imports needed, works everywhere -->
-<script>
-const FIREBASE_URL = 'https://jalala-zone-default-rtdb.firebaseio.com/tournaments.json';
+<!-- Single unified module script — Firebase SDK + all app logic in one scope -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCYHVDq8D492xais1q06ra4GtzNawpsNEA",
+  authDomain: "jalala-zone.firebaseapp.com",
+  projectId: "jalala-zone",
+  storageBucket: "jalala-zone.firebasestorage.app",
+  messagingSenderId: "1017844260648",
+  appId: "1:1017844260648:web:6273826b83aa86fe37fa1d",
+  databaseURL: "https://jalala-zone-default-rtdb.firebaseio.com"
+};
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 function fetchFromFirebase(){
-  fetch(FIREBASE_URL)
-    .then(r => r.json())
-    .then(data => {
-      if(data && typeof data === 'object'){
-        const tours = Object.values(data).filter(t => t && t.id);
-        if(!tours.length) return;
-        const localRaw = localStorage.getItem('jalala_db');
-        const localDb = localRaw ? JSON.parse(localRaw) : {tournaments:[]};
-        tours.forEach(t => {
-          const idx = localDb.tournaments.findIndex(x => x.id === t.id);
-          if(idx === -1) localDb.tournaments.push(t);
-          else localDb.tournaments[idx] = t;
-        });
-        localStorage.setItem('jalala_db', JSON.stringify(localDb));
-        db = localDb;
-        renderTournamentTabs();
-        render(activeSection);
-        updateWinnerTicker();
-      }
-    })
-    .catch(e => console.warn('Firebase fetch error:', e));
+  const r = ref(database, 'tournaments');
+  get(r).then(snap => {
+    const data = snap.val();
+    if(data){
+      const tours = Object.values(data);
+      const localRaw = localStorage.getItem('jalala_db');
+      const localDb = localRaw ? JSON.parse(localRaw) : {tournaments:[]};
+      tours.forEach(t => {
+        const idx = localDb.tournaments.findIndex(x => x.id === t.id);
+        if(idx === -1) localDb.tournaments.push(t);
+        else localDb.tournaments[idx] = t;
+      });
+      localStorage.setItem('jalala_db', JSON.stringify(localDb));
+      // db is in THIS scope — no cross-script reference needed
+      db = localDb;
+      renderTournamentTabs();
+      render(activeSection);
+      updateWinnerTicker();
+    }
+  }).catch(()=>{});
 }
 
-function initFirebase(){
-  fetchFromFirebase();
-  setInterval(fetchFromFirebase, 30000);
-}
-</script>
-
-<script>
 let db={tournaments:[]};
 let activeTid=null;
 let activeSection='table';
@@ -808,10 +812,16 @@ function updateTrophySplash(tour){
 
 // Auto-refresh every 30s (fallback if Firebase is slow)
 setInterval(()=>{load();render(activeSection);updateWinnerTicker();},30000);
+// Firebase polling
+setInterval(fetchFromFirebase, 30000);
+
+// Expose functions needed by inline onclick="" handlers
+window.openTour = openTour;
+window.showSec = showSec;
 
 init();
+fetchFromFirebase();
 updateWinnerTicker();
-initFirebase();
 </script>
 </body>
 </html>
