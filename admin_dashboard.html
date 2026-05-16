@@ -1742,7 +1742,7 @@ function renderBracket(){
             style="flex:1;text-align:center;font-size:1rem;font-weight:800;margin-bottom:0;padding:.45rem">
           <button class="fix-tap" style="flex:1;margin-top:0;padding:.45rem" onclick="saveBracketScore('${m.id}',1)">SAVE</button>
         </div>
-        ${etPkRow(1,m.et1h,m.et1a,m.pk1h,m.pk1a)}
+        ${!isHA ? etPkRow(1,m.et1h,m.et1a,m.pk1h,m.pk1a) : ''}
       </div>`;
       const leg2Html=isHA?`<div style="margin-top:.4rem">
         <div style="font-size:.65rem;color:var(--muted);margin-bottom:.3rem">Leg 2 · ${m.t2.name} (H)</div>
