@@ -152,49 +152,37 @@ tbody tr:last-child td{border-bottom:none}
 <!-- ADMIN LINK -->
 <div class="admin-link">⚙️ Admin? <a href="admin.html">Login here</a></div>
 
-<!-- Firebase loaded via dynamic import inside main script (avoids module scope isolation) -->
+<!-- Firebase REST API - no imports needed, works everywhere -->
 <script>
+const FIREBASE_URL = 'https://jalala-zone-default-rtdb.firebaseio.com/tournaments.json';
+
+function fetchFromFirebase(){
+  fetch(FIREBASE_URL)
+    .then(r => r.json())
+    .then(data => {
+      if(data && typeof data === 'object'){
+        const tours = Object.values(data).filter(t => t && t.id);
+        if(!tours.length) return;
+        const localRaw = localStorage.getItem('jalala_db');
+        const localDb = localRaw ? JSON.parse(localRaw) : {tournaments:[]};
+        tours.forEach(t => {
+          const idx = localDb.tournaments.findIndex(x => x.id === t.id);
+          if(idx === -1) localDb.tournaments.push(t);
+          else localDb.tournaments[idx] = t;
+        });
+        localStorage.setItem('jalala_db', JSON.stringify(localDb));
+        db = localDb;
+        renderTournamentTabs();
+        render(activeSection);
+        updateWinnerTicker();
+      }
+    })
+    .catch(e => console.warn('Firebase fetch error:', e));
+}
+
 function initFirebase(){
-  Promise.all([
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js")
-  ]).then(([{initializeApp},{getDatabase,ref,get}])=>{
-    const firebaseConfig={
-      apiKey:"AIzaSyCYHVDq8D492xais1q06ra4GtzNawpsNEA",
-      authDomain:"jalala-zone.firebaseapp.com",
-      projectId:"jalala-zone",
-      storageBucket:"jalala-zone.firebasestorage.app",
-      messagingSenderId:"1017844260648",
-      appId:"1:1017844260648:web:6273826b83aa86fe37fa1d",
-      databaseURL:"https://jalala-zone-default-rtdb.firebaseio.com"
-    };
-    const app=initializeApp(firebaseConfig);
-    const database=getDatabase(app);
-
-    function fetchFromFirebase(){
-      get(ref(database,'tournaments')).then(snap=>{
-        const data=snap.val();
-        if(data){
-          const tours=Object.values(data);
-          const localRaw=localStorage.getItem('jalala_db');
-          const localDb=localRaw?JSON.parse(localRaw):{tournaments:[]};
-          tours.forEach(t=>{
-            const idx=localDb.tournaments.findIndex(x=>x.id===t.id);
-            if(idx===-1)localDb.tournaments.push(t);
-            else localDb.tournaments[idx]=t;
-          });
-          localStorage.setItem('jalala_db',JSON.stringify(localDb));
-          db=localDb;
-          renderTournamentTabs();
-          render(activeSection);
-          updateWinnerTicker();
-        }
-      }).catch(e=>console.warn('Firebase error:',e));
-    }
-
-    fetchFromFirebase();
-    setInterval(fetchFromFirebase,30000);
-  }).catch(e=>console.warn('Firebase load error:',e));
+  fetchFromFirebase();
+  setInterval(fetchFromFirebase, 30000);
 }
 </script>
 
@@ -565,10 +553,6 @@ function renderPlayoffs(){
       </div>`;
     }
 
-        ${!m.done&&!m.winner?'<div style="font-size:.55rem;color:var(--muted);text-align:center;margin-top:.1rem">⏳</div>':''}
-      </div>`;
-    }
-
     // Cup size: scales with viewport but capped
 
     let html=`<div style="width:100%;padding:.5rem 0 1rem;box-sizing:border-box">
@@ -690,21 +674,44 @@ function renderGoalsRanking(){
   if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
   if(!tour.teams.length){el.innerHTML='<div class="empty"><div class="empty-icon">⚽</div>No teams yet</div>';return;}
 
-  const sorted=[...tour.teams].sort((a,b)=>b.goalsFor-a.goalsFor);
-  const max=sorted[0].goalsFor||1;
+  // Build a goals map including playoff/bracket goals
+  const playoffGoals={};
+  if(tour.bracketRounds){
+    tour.bracketRounds.forEach(r=>r.matches.forEach(m=>{
+      if(!m.t1||!m.t2)return;
+      const id1=m.t1.id,id2=m.t2.id;
+      if(!playoffGoals[id1])playoffGoals[id1]=0;
+      if(!playoffGoals[id2])playoffGoals[id2]=0;
+      // Leg 1: t1 is home
+      if(m.leg1h!=null){playoffGoals[id1]+=m.leg1h;playoffGoals[id2]+=m.leg1a;}
+      if(m.et1h!=null){playoffGoals[id1]+=m.et1h;playoffGoals[id2]+=m.et1a;}
+      // Leg 2: t2 is home
+      if(m.leg2h!=null){playoffGoals[id2]+=m.leg2h;playoffGoals[id1]+=m.leg2a;}
+      if(m.et2h!=null){playoffGoals[id2]+=m.et2h;playoffGoals[id1]+=m.et2a;}
+    }));
+  }
+
+  const teamsWithTotal=tour.teams.map(t=>({
+    ...t,
+    totalGoals:(t.goalsFor||0)+(playoffGoals[t.id]||0),
+    playoffGoals:playoffGoals[t.id]||0
+  }));
+  const sorted=[...teamsWithTotal].sort((a,b)=>b.totalGoals-a.totalGoals);
+  const max=sorted[0].totalGoals||1;
 
   let h=`<div style="padding:.8rem">
     <div style="font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:3px;color:var(--gold);margin-bottom:1rem;text-align:center">⚽ Team Goals Ranking</div>`;
 
   sorted.forEach((t,i)=>{
-    const pct=Math.round((t.goalsFor/max)*100);
+    const pct=Math.round((t.totalGoals/max)*100);
     const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
     const barColor=i===0?'var(--gold)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--blue)';
+    const extraInfo=t.playoffGoals>0?`<span style="font-size:.6rem;color:var(--blue);margin-left:.4rem">(+${t.playoffGoals} playoff)</span>`:'';
     h+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;margin-bottom:.6rem">
       <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
         <div style="font-family:'Bebas Neue';font-size:1.1rem;color:var(--muted);width:1.4rem;text-align:center">${i+1}</div>
-        <div style="flex:1;font-weight:700;font-size:.9rem">${medal} ${t.name}</div>
-        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);background:rgba(212,175,55,.12);padding:.15rem .6rem;border-radius:6px">${t.goalsFor} <span style="font-size:.7rem;color:var(--muted)">GF</span></div>
+        <div style="flex:1;font-weight:700;font-size:.9rem">${medal} ${t.name}${extraInfo}</div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);background:rgba(212,175,55,.12);padding:.15rem .6rem;border-radius:6px">${t.totalGoals} <span style="font-size:.7rem;color:var(--muted)">GF</span></div>
       </div>
       <div style="background:var(--border);border-radius:4px;height:6px;overflow:hidden">
         <div style="height:100%;width:${pct}%;background:${barColor};border-radius:4px;transition:width .4s"></div>
