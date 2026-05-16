@@ -174,7 +174,6 @@ function fetchFromFirebase(){
   get(r).then(snap => {
     const data = snap.val();
     if(data){
-      // Merge into local db format
       const tours = Object.values(data);
       const localRaw = localStorage.getItem('jalala_db');
       const localDb = localRaw ? JSON.parse(localRaw) : {tournaments:[]};
@@ -184,16 +183,16 @@ function fetchFromFirebase(){
         else localDb.tournaments[idx] = t;
       });
       localStorage.setItem('jalala_db', JSON.stringify(localDb));
-      if(window._appReady){
-        db = localDb;
-        renderTournamentTabs();
-        render(activeSection);
-        updateWinnerTicker();
-      }
+      db = localDb;
+      renderTournamentTabs();
+      render(activeSection);
+      updateWinnerTicker();
     }
-  }).catch(()=>{});
+  }).catch(e => { console.warn('Firebase fetch error:', e); });
 }
 
+// Mark app ready immediately so Firebase callback always re-renders
+window._appReady = true;
 // Fetch on load then every 30s
 fetchFromFirebase();
 setInterval(fetchFromFirebase, 30000);
@@ -220,7 +219,7 @@ function renderTournamentTabs(){
 
   if(!tours.length){
     tabs.style.display='none';
-    document.getElementById('secTable').innerHTML='<div class="empty"><div class="empty-icon">🏆</div><p>No tournaments yet.<br>Check back soon!</p></div>';
+    document.getElementById('secTable').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><p>Loading tournament data…<br>Please wait a moment.</p></div>';
     return;
   }
 
@@ -805,7 +804,6 @@ setInterval(()=>{load();render(activeSection);updateWinnerTicker();},30000);
 
 init();
 updateWinnerTicker();
-window._appReady = true;
 </script>
 </body>
 </html>
