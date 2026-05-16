@@ -345,24 +345,70 @@ function renderFixtures(){
   var tour=getTour();
   var el=document.getElementById('secFixtures');
   if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
+
+  // League pending matches
   var pending=tour.matches.filter(function(m){ return !m.done; });
-  if(!pending.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div>No upcoming fixtures</div>';return;}
-  var rounds=pending.map(function(m){ return m.round; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
+
+  // Bracket pending matches (where both teams are known but not done)
+  var bracketPending=[];
+  if(tour.bracketRounds&&tour.bracketRounds.length){
+    tour.bracketRounds.forEach(function(r){
+      r.matches.forEach(function(m){
+        if(m.t1&&m.t2&&!m.done){
+          bracketPending.push({
+            round: r.name+(m.isFinal?' (Final)':m.is3rd?' (3rd Place)':''),
+            homeName: m.t1.name,
+            awayName: m.t2.name,
+            date: m.date||null,
+            legs: m.legs,
+            isPlayoff: true
+          });
+        }
+      });
+    });
+  }
+
+  if(!pending.length&&!bracketPending.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">📅</div>No upcoming fixtures</div>';return;
+  }
+
   var h='';
-  rounds.forEach(function(r){
+
+  // League fixtures grouped by round
+  if(pending.length){
+    var rounds=pending.map(function(m){ return m.round; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
+    rounds.forEach(function(r){
+      h+='<div style="margin-bottom:1.4rem">'+
+        '<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">'+
+        '<div style="flex:1;height:1px;background:var(--border)"></div>'+
+        '<div style="font-family:\'Bebas Neue\';font-size:.95rem;letter-spacing:2px;color:var(--gold);padding:.2rem .8rem;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);border-radius:20px;white-space:nowrap">📅 '+r+'</div>'+
+        '<div style="flex:1;height:1px;background:var(--border)"></div></div>';
+      pending.filter(function(m){ return m.round===r; }).forEach(function(m){
+        h+='<div class="fix-item">'+
+          '<div class="fix-vs">'+m.homeName+' <span style="color:var(--muted);font-weight:400">vs</span> '+m.awayName+'</div>'+
+          '<div class="fix-sub">'+(m.date||'Date TBC')+'</div>'+
+          '</div>';
+      });
+      h+='</div>';
+    });
+  }
+
+  // Playoff/bracket fixtures
+  if(bracketPending.length){
     h+='<div style="margin-bottom:1.4rem">'+
       '<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">'+
       '<div style="flex:1;height:1px;background:var(--border)"></div>'+
-      '<div style="font-family:\'Bebas Neue\';font-size:.95rem;letter-spacing:2px;color:var(--gold);padding:.2rem .8rem;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);border-radius:20px;white-space:nowrap">📅 '+r+'</div>'+
+      '<div style="font-family:\'Bebas Neue\';font-size:.95rem;letter-spacing:2px;color:var(--gold);padding:.2rem .8rem;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);border-radius:20px;white-space:nowrap">🏆 Playoffs</div>'+
       '<div style="flex:1;height:1px;background:var(--border)"></div></div>';
-    pending.filter(function(m){ return m.round===r; }).forEach(function(m){
+    bracketPending.forEach(function(m){
       h+='<div class="fix-item">'+
         '<div class="fix-vs">'+m.homeName+' <span style="color:var(--muted);font-weight:400">vs</span> '+m.awayName+'</div>'+
-        '<div class="fix-sub">'+(m.date||'Date TBC')+'</div>'+
+        '<div class="fix-sub">'+m.round+(m.legs===2?' · Home & Away':' · Single Match')+(m.date?' · '+m.date:'')+'</div>'+
         '</div>';
     });
     h+='</div>';
-  });
+  }
+
   el.innerHTML=h;
 }
 
@@ -411,8 +457,8 @@ function renderPlayoffs(){
     var wn=m.winner?m.winner.name:null, w1=wn===t1, w2=wn===t2;
     var leg2Line='';
     if(isHA){
-      var agg1=s1&&s2?(m.leg1h||0)+(m.leg2a||0):null;
-      var agg2=s1&&s2?(m.leg1a||0)+(m.leg2h||0):null;
+      var agg1=s1&&s2?(m.leg1h||0)+(m.leg2a||0)+(m.et1h||0)+(m.et2a||0):null;
+      var agg2=s1&&s2?(m.leg1a||0)+(m.leg2h||0)+(m.et1a||0)+(m.et2h||0):null;
       var aggStr=agg1!=null?' · Agg: '+agg1+'–'+agg2:'';
       leg2Line='<div style="font-size:.6rem;color:var(--muted);border-top:1px solid rgba(255,255,255,.07);padding-top:.25rem;margin-top:.15rem">'+
         '<span>Leg 1: '+(s1||'TBC')+etPkBadge(m.et1h,m.et1a,m.pk1h,m.pk1a)+'</span><br>'+
@@ -437,7 +483,7 @@ function renderPlayoffs(){
     var s2=m.leg2h!=null&&m.leg2a!=null?m.leg2h+'–'+m.leg2a:null;
     var w1=m.winner&&m.winner.name===t1, w2=m.winner&&m.winner.name===t2;
     var scoreLabel='–';
-    if(isHA&&s1&&s2) scoreLabel=((m.leg1h||0)+(m.leg2a||0))+'–'+((m.leg1a||0)+(m.leg2h||0));
+    if(isHA&&s1&&s2) scoreLabel=((m.leg1h||0)+(m.leg2a||0)+(m.et1h||0)+(m.et2a||0))+'–'+((m.leg1a||0)+(m.leg2h||0)+(m.et1a||0)+(m.et2h||0));
     else if(!isHA&&s1) scoreLabel=s1;
     var etPk=[];
     if(m.et1h!=null) etPk.push('ET '+m.et1h+'–'+m.et1a);
@@ -519,7 +565,7 @@ function renderPlayoffs(){
           var s1r=m.leg1h!=null?m.leg1h+'–'+m.leg1a:'?';
           var s2r=m.leg2h!=null?m.leg2h+'–'+m.leg2a:'?';
           sd='<div style="font-size:.62rem;color:var(--muted)">Leg 1: '+s1r+' · Leg 2: '+s2r+'</div>'+
-            '<div style="font-family:\'Bebas Neue\';font-size:.9rem;color:var(--gold);letter-spacing:1px">Agg: '+((m.leg1h||0)+(m.leg2a||0))+'–'+((m.leg1a||0)+(m.leg2h||0))+'</div>';
+            '<div style="font-family:\'Bebas Neue\';font-size:.9rem;color:var(--gold);letter-spacing:1px">Agg: '+((m.leg1h||0)+(m.leg2a||0)+(m.et1h||0)+(m.et2a||0))+'–'+((m.leg1a||0)+(m.leg2h||0)+(m.et1a||0)+(m.et2h||0))+'</div>';
         } else {
           sd='<div style="font-family:\'Bebas Neue\';font-size:1rem;color:var(--gold);letter-spacing:2px">'+(m.leg1h!=null?m.leg1h+'–'+m.leg1a:'?')+'</div>';
         }

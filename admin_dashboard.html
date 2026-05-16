@@ -1655,17 +1655,38 @@ function renderBracket(){
   function bCompactCard(m){
     const t1=m.t1?m.t1.name:'TBD';
     const t2=m.t2?m.t2.name:'TBD';
-    const s1=m.leg1h!=null&&m.leg1a!=null?m.leg1h+'–'+m.leg1a:null;
+    const isHA=m.legs===2;
+    const hasL1=m.leg1h!=null&&m.leg1a!=null;
+    const hasL2=m.leg2h!=null&&m.leg2a!=null;
     const w1=m.winner&&m.winner.name===t1;
     const w2=m.winner&&m.winner.name===t2;
+    // Score label: aggregate when both legs exist, L1 score when only leg1, TBC otherwise
+    let scoreLabel='–';
+    let subLabel='';
+    if(isHA){
+      if(hasL1&&hasL2){
+        const agg1=(m.leg1h||0)+(m.leg2a||0)+(m.et1h||0)+(m.et2a||0);
+        const agg2=(m.leg1a||0)+(m.leg2h||0)+(m.et1a||0)+(m.et2h||0);
+        scoreLabel=agg1+'–'+agg2;
+        if(m.pk2h!=null) subLabel='PK '+m.pk2h+'–'+m.pk2a;
+      } else if(hasL1){
+        scoreLabel=m.leg1h+'–'+m.leg1a;
+        subLabel='L1';
+      }
+    } else {
+      if(hasL1){
+        scoreLabel=m.leg1h+'–'+m.leg1a;
+        if(m.pk1h!=null) subLabel='PK '+m.pk1h+'–'+m.pk1a;
+      }
+    }
     return `<div style="background:rgba(255,255,255,.05);border:1px solid ${m.done?'rgba(212,175,55,.6)':'var(--border)'};border-radius:6px;padding:.3rem .4rem;font-size:.68rem;width:100%;box-sizing:border-box">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:2px;margin-bottom:.15rem">
-        <span style="font-weight:700;color:${w1?'var(--gold)':'var(--text)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0">${t1}</span>
-        <span style="font-family:'Bebas Neue';color:${s1?'var(--text)':'var(--muted)'};flex-shrink:0;font-size:.75rem;margin-left:2px">${s1||'–'}</span>
+        <span style="font-weight:700;color:${w1?'var(--gold)':'var(--text)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0">${t1}${w1?' 🏆':''}</span>
+        <span style="font-family:'Bebas Neue';color:${scoreLabel!=='–'?'var(--text)':'var(--muted)'};flex-shrink:0;font-size:.75rem;margin-left:2px">${scoreLabel}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:2px">
-        <span style="font-weight:700;color:${w2?'var(--gold)':'var(--text)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0">${t2}</span>
-        <span style="font-family:'Bebas Neue';color:var(--muted);flex-shrink:0;font-size:.75rem;margin-left:2px">${m.done?'':'TBC'}</span>
+        <span style="font-weight:700;color:${w2?'var(--gold)':'var(--text)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0">${t2}${w2?' 🏆':''}</span>
+        <span style="font-family:'Bebas Neue';color:var(--muted);flex-shrink:0;font-size:.6rem;margin-left:2px">${subLabel}</span>
       </div>
       ${!m.done&&!m.winner?'<div style="font-size:.55rem;color:var(--muted);text-align:center;margin-top:.1rem">⏳</div>':''}
     </div>`;
@@ -1823,22 +1844,26 @@ function saveBracketScore(mid,leg){
     }
     match.done=true;
   } else if(match.legs===2&&leg===2&&match.leg1h!==null){
+    // Base aggregate (regular time both legs)
     const agg1=(match.leg1h||0)+(match.leg2a||0);
     const agg2=(match.leg1a||0)+(match.leg2h||0);
-    if(agg1===agg2){
+    // Full aggregate including ET (et2 is played in leg 2, et1 in leg 1 if single-leg ET applies)
+    const fullAgg1=agg1+(match.et1h||0)+(match.et2a||0);
+    const fullAgg2=agg2+(match.et1a||0)+(match.et2h||0);
+    if(fullAgg1===fullAgg2){
       if(pkH!==null&&pkA!==null&&!isNaN(pkH)&&!isNaN(pkA)){
         if(pkH===pkA){toast('❌ Same PK score for both teams — one must win. Fix it.',true);return;}
         winner=pkH>pkA?match.t1:match.t2;
         loser=pkH>pkA?match.t2:match.t1;
       } else {
-        toast('❌ Aggregate is level! Add Penalties in Leg 2 to decide the winner.',true);return;
+        toast('❌ Aggregate is level after ET! Add Penalties in Leg 2 to decide the winner.',true);return;
       }
     } else {
-      winner=agg1>agg2?match.t1:match.t2;
-      loser=agg1>agg2?match.t2:match.t1;
+      winner=fullAgg1>fullAgg2?match.t1:match.t2;
+      loser=fullAgg1>fullAgg2?match.t2:match.t1;
     }
     match.done=true;
-    match.agg=agg1+' – '+agg2;
+    match.agg=fullAgg1+' – '+fullAgg2+(match.pk2h!=null?' (PK '+match.pk2h+'–'+match.pk2a+')':'');
   }
 
   if(winner){
