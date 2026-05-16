@@ -1593,15 +1593,11 @@ function renderBracket(){
     if(m.legs===2){
       const hasL1=m.leg1h!=null&&m.leg1a!=null;
       const hasL2=m.leg2h!=null&&m.leg2a!=null;
-      if(m.done&&hasL1&&hasL2){
-        // Full aggregate including ET/PK goals
+      if(hasL1&&hasL2){
+        // Show aggregate whenever both legs exist (with ET/PK if done)
         const agg1=(m.leg1h||0)+(m.leg2a||0)+(m.et1h||0)+(m.et2a||0);
         const agg2=(m.leg1a||0)+(m.leg2h||0)+(m.et1a||0)+(m.et2h||0);
         scoreStr=agg1+'–'+agg2+(m.pk2h!=null?' (PK '+m.pk2h+'–'+m.pk2a+')':'');
-      } else if(hasL1&&hasL2){
-        const agg1=(m.leg1h||0)+(m.leg2a||0);
-        const agg2=(m.leg1a||0)+(m.leg2h||0);
-        scoreStr='Agg '+agg1+'–'+agg2;
       } else if(hasL1){
         scoreStr='L1: '+m.leg1h+'–'+m.leg1a;
       }
