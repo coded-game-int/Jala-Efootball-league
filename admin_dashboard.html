@@ -92,19 +92,30 @@ select option{background:#0d0d1a}
 .stat-l{font-size:.62rem;color:var(--muted);text-transform:uppercase;margin-top:.2rem}
 
 /* ─── FIXTURE CARDS ─── */
-.fix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.8rem}
-.fix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s;position:relative}
+.fix-grid{display:flex;flex-direction:column;gap:.7rem}
+.fix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .fix-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--gold)}
-.fix-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 6px 20px rgba(6,255,165,.12)}
+.fix-card:hover{border-color:var(--green);box-shadow:0 4px 16px rgba(6,255,165,.12)}
 .fix-card:hover::before{background:var(--green)}
-.fix-card.done{opacity:.6;cursor:default}.fix-card.done:hover{transform:none;border-color:var(--border)}
+.fix-card.done{opacity:.85;cursor:default}.fix-card.done:hover{border-color:var(--border);box-shadow:none}
 .fix-card.done::before{background:var(--green)}
-.fix-round{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.6rem}
-.fix-team{font-weight:700;font-size:.9rem;padding:.25rem 0}
+.fix-round{font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.55rem}
+.fix-matchup{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.fix-home-side{flex:1;min-width:0}
+.fix-away-side{flex:1;min-width:0;text-align:right}
+.fix-tname{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fix-tcoach{font-size:.68rem;color:var(--gold);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fix-away-side .fix-tname{text-align:right}
+.fix-away-side .fix-tcoach{text-align:right}
+.fix-vs-badge{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;color:var(--muted);letter-spacing:.5px}
+.fix-score-badge{flex-shrink:0;text-align:center;min-width:52px}
+.fix-score-num{font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold);letter-spacing:3px;line-height:1}
 .fix-vs{text-align:center;font-size:.65rem;color:var(--muted);letter-spacing:2px;font-weight:700}
 .fix-score{text-align:center;font-family:'Bebas Neue';font-size:2rem;color:var(--gold);letter-spacing:3px;margin:.2rem 0}
-.fix-tap{margin-top:.7rem;width:100%;padding:.5rem;background:rgba(6,255,165,.1);color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.fix-tap{width:100%;padding:.5rem;background:rgba(6,255,165,.1);color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
 .fix-tap:hover{background:rgba(6,255,165,.2)}
+.fix-edit-btn{width:100%;padding:.4rem;background:rgba(77,159,255,.1);color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.72rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px;margin-top:.4rem}
+.fix-edit-btn:hover{background:rgba(77,159,255,.2)}
 
 /* ─── SCORE MODAL ─── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
@@ -175,7 +186,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
 .seg-btn{flex:1;padding:.5rem;background:none;border:none;color:var(--muted);font-family:'Barlow';font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;text-align:center}
 .seg-btn.on{background:rgba(212,175,55,.15);color:var(--gold)}
 
-@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}.fix-grid{grid-template-columns:1fr}}
+@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -347,6 +358,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
   <div class="tabs">
     <button class="tab qs-tab active" onclick="showTab('qs')" id="tab-qs">⚡ Quick Score</button>
     <button class="tab" onclick="showTab('schedule')" id="tab-schedule">📅 Schedule</button>
+    <button class="tab" onclick="showTab('results')" id="tab-results">✅ Results</button>
     <button class="tab" onclick="showTab('table')" id="tab-table">📊 Table</button>
     <button class="tab" onclick="showTab('teams')" id="tab-teams">👥 Teams</button>
     <button class="tab" onclick="showTab('playoffs')" id="tab-playoffs">🏆 Playoffs</button>
@@ -396,6 +408,15 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
     <div class="card">
       <div class="card-title">📋 All Fixtures</div>
       <div id="allFixtures"><div class="empty">No fixtures yet</div></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="tab-content" id="tc-results">
+    <div class="card">
+      <div class="card-title" style="color:var(--green)">✅ Completed Results</div>
+      <div class="info" style="margin-bottom:.8rem">Tap ✏️ Edit on any result to correct a wrong score. Stats are automatically recalculated.</div>
+      <div id="resultsEditGrid"><div class="empty">No completed matches yet</div></div>
     </div>
   </div>
 
@@ -898,6 +919,7 @@ function showTab(name){
   document.getElementById('tc-'+name).classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='table')renderTable();
+  if(name==='results')renderResultsEdit();
   if(name==='teams')renderTeams();
   if(name==='playoffs'){renderPlayoffs();checkPlayoffAlertFull();}
   if(name==='rules')loadRulesEditor();
@@ -1092,6 +1114,57 @@ function renderFixtureList(){
 // ═══════════════════════════════════════════
 // QUICK SCORE
 // ═══════════════════════════════════════════
+function getTeamCoach(teamName){
+  const tour=getTour();
+  if(!tour||!tour.teams) return '';
+  const t=tour.teams.find(x=>x.name&&x.name.trim().toLowerCase()===(teamName||'').trim().toLowerCase());
+  return t&&t.coach?'🧢 '+t.coach:'';
+}
+
+function renderResultsEdit(){
+  const tour=getTour();
+  const el=document.getElementById('resultsEditGrid');
+  if(!el)return;
+  if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
+  const done=[...tour.matches.filter(m=>m.done)].reverse();
+  if(!done.length){el.innerHTML='<div class="empty">No completed matches yet</div>';return;}
+  const rounds=[...new Set(done.map(m=>m.round))];
+  let h='';
+  rounds.forEach(r=>{
+    const rm=done.filter(m=>m.round===r);
+    h+=`<div style="margin-bottom:1.2rem">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--green);padding:.2rem .8rem;background:rgba(6,255,165,.08);border:1px solid rgba(6,255,165,.25);border-radius:20px;white-space:nowrap">✅ ${r}</div>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>`;
+    rm.forEach(m=>{
+      const homeWin=m.homeScore>m.awayScore, awayWin=m.awayScore>m.homeScore;
+      const hCoach=getTeamCoach(m.homeName), aCoach=getTeamCoach(m.awayName);
+      h+=`<div class="fix-card done" style="margin-bottom:.5rem;opacity:1;cursor:default">
+        <div class="fix-round">📅 ${m.date||'Date TBC'}</div>
+        <div class="fix-matchup">
+          <div class="fix-home-side">
+            <div class="fix-tname" style="${homeWin?'color:var(--green)':''}">${homeWin?'🏆 ':''}${m.homeName}</div>
+            ${hCoach?`<div class="fix-tcoach">${hCoach}</div>`:'<div class="fix-tcoach"></div>'}
+          </div>
+          <div class="fix-score-badge">
+            <div class="fix-score-num">${m.homeScore} – ${m.awayScore}</div>
+            <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
+          </div>
+          <div class="fix-away-side">
+            <div class="fix-tname" style="${awayWin?'color:var(--green)':''}">${m.awayName}${awayWin?' 🏆':''}</div>
+            ${aCoach?`<div class="fix-tcoach">${aCoach} </div>`:'<div class="fix-tcoach"></div>'}
+          </div>
+        </div>
+        <button class="fix-edit-btn" onclick="openEditScore('${m.id}')">✏️ EDIT THIS RESULT</button>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
 function renderQS(){
   const tour=getTour();if(!tour)return;
   // Trim round names to fix any invisible whitespace that could break grouping
@@ -1120,10 +1193,18 @@ function renderQS(){
         <div class="fix-grid">
           ${rMatches.map(m=>`
           <div class="fix-card" onclick="openScore('${m.id}')">
-            <div class="fix-round">${m.date?m.date:'Date TBC'}</div>
-            <div class="fix-team">🏠 ${m.homeName}</div>
-            <div class="fix-vs">VS</div>
-            <div class="fix-team">✈️ ${m.awayName}</div>
+            <div class="fix-round">📅 ${m.date?m.date:'Date TBC'}</div>
+            <div class="fix-matchup">
+              <div class="fix-home-side">
+                <div class="fix-tname">🏠 ${m.homeName}</div>
+                <div class="fix-tcoach">${getTeamCoach(m.homeName)}</div>
+              </div>
+              <div class="fix-vs-badge">VS</div>
+              <div class="fix-away-side">
+                <div class="fix-tname">${m.awayName} ✈️</div>
+                <div class="fix-tcoach">${getTeamCoach(m.awayName)}</div>
+              </div>
+            </div>
             <button class="fix-tap">⚡ TAP TO ENTER SCORE</button>
           </div>`).join('')}
         </div>
@@ -1147,11 +1228,22 @@ function renderQS(){
         <div class="fix-grid">
           ${rMatches.map(m=>`
           <div class="fix-card done">
-            <div class="fix-round">${m.date||''}</div>
-            <div class="fix-team" style="${m.homeScore>m.awayScore?'color:var(--green)':''}">🏠 ${m.homeName}</div>
-            <div class="fix-score">${m.homeScore} – ${m.awayScore}</div>
-            <div class="fix-team" style="${m.awayScore>m.homeScore?'color:var(--green)':''}">✈️ ${m.awayName}</div>
-            <div style="text-align:center;font-size:.7rem;color:var(--green);font-weight:700;margin-top:.5rem">✅ FINAL</div>
+            <div class="fix-round">📅 ${m.date||'Date TBC'}</div>
+            <div class="fix-matchup">
+              <div class="fix-home-side">
+                <div class="fix-tname" style="${m.homeScore>m.awayScore?'color:var(--green)':''}">🏠 ${m.homeName}</div>
+                <div class="fix-tcoach">${getTeamCoach(m.homeName)}</div>
+              </div>
+              <div class="fix-score-badge">
+                <div class="fix-score-num">${m.homeScore} – ${m.awayScore}</div>
+                <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
+              </div>
+              <div class="fix-away-side">
+                <div class="fix-tname" style="${m.awayScore>m.homeScore?'color:var(--green)':''}">${m.awayName} ✈️</div>
+                <div class="fix-tcoach">${getTeamCoach(m.awayName)}</div>
+              </div>
+            </div>
+            <button class="fix-edit-btn" onclick="event.stopPropagation();openEditScore('${m.id}')">✏️ EDIT RESULT</button>
           </div>`).join('')}
         </div>
       </div>`;
@@ -1216,6 +1308,8 @@ function saveScore(){
   closeScore();sdb();updateAll();
   toast(`⚽ ${h.name} ${smH} – ${smA} ${a.name}`);
   checkPlayoffAlert();
+  // Refresh results edit tab if open
+  if(document.getElementById('tc-results')&&document.getElementById('tc-results').classList.contains('active'))renderResultsEdit();
 }
 
 // ═══════════════════════════════════════════
