@@ -92,30 +92,19 @@ select option{background:#0d0d1a}
 .stat-l{font-size:.62rem;color:var(--muted);text-transform:uppercase;margin-top:.2rem}
 
 /* ─── FIXTURE CARDS ─── */
-.fix-grid{display:flex;flex-direction:column;gap:.7rem}
-.fix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.fix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.8rem}
+.fix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s;position:relative}
 .fix-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--gold)}
-.fix-card:hover{border-color:var(--green);box-shadow:0 4px 16px rgba(6,255,165,.12)}
+.fix-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 6px 20px rgba(6,255,165,.12)}
 .fix-card:hover::before{background:var(--green)}
-.fix-card.done{opacity:.85;cursor:default}.fix-card.done:hover{border-color:var(--border);box-shadow:none}
+.fix-card.done{opacity:.6;cursor:default}.fix-card.done:hover{transform:none;border-color:var(--border)}
 .fix-card.done::before{background:var(--green)}
-.fix-round{font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.55rem}
-.fix-matchup{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
-.fix-home-side{flex:1;min-width:0}
-.fix-away-side{flex:1;min-width:0;text-align:right}
-.fix-tname{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fix-tcoach{font-size:.68rem;color:var(--gold);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fix-away-side .fix-tname{text-align:right}
-.fix-away-side .fix-tcoach{text-align:right}
-.fix-vs-badge{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;color:var(--muted);letter-spacing:.5px}
-.fix-score-badge{flex-shrink:0;text-align:center;min-width:52px}
-.fix-score-num{font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold);letter-spacing:3px;line-height:1}
+.fix-round{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.6rem}
+.fix-team{font-weight:700;font-size:.9rem;padding:.25rem 0}
 .fix-vs{text-align:center;font-size:.65rem;color:var(--muted);letter-spacing:2px;font-weight:700}
 .fix-score{text-align:center;font-family:'Bebas Neue';font-size:2rem;color:var(--gold);letter-spacing:3px;margin:.2rem 0}
-.fix-tap{width:100%;padding:.5rem;background:rgba(6,255,165,.1);color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.fix-tap{margin-top:.7rem;width:100%;padding:.5rem;background:rgba(6,255,165,.1);color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
 .fix-tap:hover{background:rgba(6,255,165,.2)}
-.fix-edit-btn{width:100%;padding:.4rem;background:rgba(77,159,255,.1);color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.72rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px;margin-top:.4rem}
-.fix-edit-btn:hover{background:rgba(77,159,255,.2)}
 
 /* ─── SCORE MODAL ─── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
@@ -186,7 +175,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
 .seg-btn{flex:1;padding:.5rem;background:none;border:none;color:var(--muted);font-family:'Barlow';font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;text-align:center}
 .seg-btn.on{background:rgba(212,175,55,.15);color:var(--gold)}
 
-@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}.fix-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -212,6 +201,33 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
   <div class="t-list-title">Tournaments</div>
   <div id="tList"><div class="t-empty"><div class="t-empty-icon">🏆</div><p>No tournaments yet.<br>Create one below!</p></div></div>
   <button class="btn-create" onclick="startWizard()">+ CREATE NEW TOURNAMENT</button>
+
+  <!-- ── TEAMS REGISTRY (NEW — PFL v31) ── -->
+  <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="t-list-title" style="margin-bottom:0">👥 Teams Registry</div>
+      <button class="btn-sm" style="border-color:var(--gold);color:var(--gold)" onclick="toggleRegistryForm()">+ New Team</button>
+    </div>
+    <div class="info" style="margin-bottom:1rem">Teams created here exist permanently — visible on the public page even before any tournament starts. Adding a team during a tournament auto-saves them here too.</div>
+
+    <!-- New/Edit team form (hidden by default) -->
+    <div id="regFormWrap" style="display:none">
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title" id="regFormTitle">➕ New Team</div>
+        <label class="lbl">Team Name</label>
+        <input type="text" id="regName" placeholder="e.g. FC Jalala United">
+        <label class="lbl">Coach Name</label>
+        <input type="text" id="regCoach" placeholder="Coach name">
+        <div style="display:flex;gap:.7rem">
+          <button class="btn-full btn-gold" onclick="saveRegistryTeam()">💾 SAVE TEAM</button>
+          <button class="btn-full btn-outline" onclick="cancelRegistryForm()" style="flex:.4">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registry list -->
+    <div id="regList"><div class="empty" style="padding:1.5rem">No teams in registry yet</div></div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════ -->
@@ -357,8 +373,8 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
 
   <div class="tabs">
     <button class="tab qs-tab active" onclick="showTab('qs')" id="tab-qs">⚡ Quick Score</button>
-    <button class="tab" onclick="showTab('schedule')" id="tab-schedule">📅 Schedule</button>
     <button class="tab" onclick="showTab('results')" id="tab-results">✅ Results</button>
+    <button class="tab" onclick="showTab('schedule')" id="tab-schedule">📅 Schedule</button>
     <button class="tab" onclick="showTab('table')" id="tab-table">📊 Table</button>
     <button class="tab" onclick="showTab('teams')" id="tab-teams">👥 Teams</button>
     <button class="tab" onclick="showTab('playoffs')" id="tab-playoffs">🏆 Playoffs</button>
@@ -382,6 +398,15 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
     <div class="card">
       <div class="card-title">✅ Completed</div>
       <div id="doneGrid" class="fix-grid"><div class="empty">No completed matches yet</div></div>
+    </div>
+  </div>
+
+  <!-- RESULTS (NEW — PFL v31) -->
+  <div class="tab-content" id="tc-results">
+    <div class="card">
+      <div class="card-title" style="color:var(--green)">✅ Completed Results</div>
+      <div class="info" style="margin-bottom:.8rem">Tap <strong>✏️ Edit</strong> on any result to correct a wrong score. Stats are automatically recalculated.</div>
+      <div id="resultsEditGrid"><div class="empty">No completed matches yet</div></div>
     </div>
   </div>
 
@@ -411,15 +436,6 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
     </div>
   </div>
 
-  <!-- RESULTS -->
-  <div class="tab-content" id="tc-results">
-    <div class="card">
-      <div class="card-title" style="color:var(--green)">✅ Completed Results</div>
-      <div class="info" style="margin-bottom:.8rem">Tap ✏️ Edit on any result to correct a wrong score. Stats are automatically recalculated.</div>
-      <div id="resultsEditGrid"><div class="empty">No completed matches yet</div></div>
-    </div>
-  </div>
-
   <!-- TABLE -->
   <div class="tab-content" id="tc-table">
     <div id="tableView"><div class="empty">No data yet</div></div>
@@ -429,8 +445,14 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
   <div class="tab-content" id="tc-teams">
     <div class="card">
       <div class="card-title">➕ Add Team</div>
-      <label class="lbl">Team Name</label>
-      <input type="text" id="addTeamName" placeholder="Team name">
+      <!-- Pick from Registry (NEW) -->
+      <label class="lbl">Pick from Registry</label>
+      <select id="addTeamSelect" style="width:100%;padding:.6rem;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:6px;font-family:'Barlow';font-size:.95rem">
+        <option value="">-- Select a registered team --</option>
+      </select>
+      <div style="text-align:center;color:var(--muted);font-size:.8rem;margin:.5rem 0">— or add new —</div>
+      <label class="lbl">New Team Name</label>
+      <input type="text" id="addTeamName" placeholder="Team name (saves to registry too)">
       <label class="lbl">Coach Name</label>
       <input type="text" id="addCoach" placeholder="Coach name">
       <div id="addGroupRow" style="display:none">
@@ -546,6 +568,11 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
     </div>
     <div class="card">
       <div class="card-title" style="color:var(--red)">🔴 Danger Zone</div>
+      <!-- Mark as Finished (NEW — PFL v31) -->
+      <div id="markFinishedWrap" style="margin-bottom:.6rem">
+        <button class="btn-full" style="background:rgba(212,175,55,.15);border:1.5px solid var(--gold);color:var(--gold);padding:.85rem;border-radius:8px;font-family:'Barlow';font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;width:100%" onclick="markTournamentFinished()">🏁 MARK AS FINISHED</button>
+        <div class="info" style="margin-top:.5rem;font-size:.75rem">Marks this season as complete. It moves to Past Seasons on the public page.</div>
+      </div>
       <button class="btn-full btn-red" onclick="resetResults()" style="margin-bottom:.6rem">RESET ALL RESULTS</button>
       <button class="btn-full btn-red" onclick="deleteTournament()">DELETE THIS TOURNAMENT</button>
     </div>
@@ -653,6 +680,20 @@ window._fbLoadAll = () => {
 };
 
 window._fbReady = true;
+
+// ── Registry Firebase hooks (NEW — PFL v31) ──
+window._fbSaveRegTeam = (tid, teamData) => {
+  const r = ref(database, 'registry/' + tid);
+  return set(r, teamData);
+};
+window._fbDeleteRegTeam = (tid) => {
+  const r = ref(database, 'registry/' + tid);
+  return set(r, null);
+};
+window._fbLoadRegistry = () => {
+  const r = ref(database, 'registry');
+  return get(r).then(snap => snap.val());
+};
 </script>
 
 <script>
@@ -715,18 +756,7 @@ function doLogout(){
 // ═══════════════════════════════════════════
 // TOURNAMENT LIST
 // ═══════════════════════════════════════════
-function renderList(){
-  const el=document.getElementById('tList');
-  if(!db.tournaments.length){el.innerHTML='<div class="t-empty"><div class="t-empty-icon">🏆</div><p>No tournaments yet.<br>Create one below!</p></div>';return;}
-  el.innerHTML=db.tournaments.map(t=>`
-    <div class="t-card" onclick="openTour('${t.id}')">
-      <div>
-        <div class="t-card-name">${t.name}</div>
-        <div class="t-card-meta">${t.season||''} · ${t.format==='league'?'League':'Groups'} · ${t.teams.length} teams · ${t.matches.filter(m=>m.done).length} results</div>
-      </div>
-      <span class="t-card-badge">${t.format==='league'?'📋':'🏟️'}</span>
-    </div>`).join('');
-}
+// renderList — defined below with FINISHED badge support (PFL v31 upgrade)
 
 // ═══════════════════════════════════════════
 // WIZARD
@@ -892,6 +922,7 @@ function openTour(tid){
   activeTid=tid;
   const tour=getTour();
   if(!tour)return;
+  normalizeTour(tour);
   document.getElementById('viewList').style.display='none';
   document.getElementById('viewWizard').style.display='none';
   document.getElementById('viewDash').style.display='block';
@@ -913,17 +944,7 @@ function backToList(){
 // ═══════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════
-function showTab(name){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tc-'+name).classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
-  if(name==='table')renderTable();
-  if(name==='results')renderResultsEdit();
-  if(name==='teams')renderTeams();
-  if(name==='playoffs'){renderPlayoffs();checkPlayoffAlertFull();}
-  if(name==='rules')loadRulesEditor();
-}
+// showTab — defined below with Results tab + registry dropdown + settings badge (PFL v31 upgrade)
 
 // ═══════════════════════════════════════════
 // TEAMS
@@ -946,17 +967,7 @@ function buildTeamSelects(){
   ['schHome','schAway','po1','po2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h;});
 }
 
-function addTeam(){
-  const tour=getTour();if(!tour)return;
-  const n=document.getElementById('addTeamName').value.trim();
-  const c=document.getElementById('addCoach').value.trim();
-  if(!n){toast('Enter team name',true);return;}
-  const g=tour.format==='groups'?document.getElementById('addGroup').value:'';
-  tour.teams.push({id:'team_'+Date.now(),name:n,coach:c,group:g,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
-  document.getElementById('addTeamName').value='';
-  document.getElementById('addCoach').value='';
-  sdb();buildTeamSelects();renderTeams();toast(`${n} added!`);
-}
+// addTeam — defined below with registry-aware logic (PFL v31 upgrade)
 
 function deleteTeam(tid){
   const tour=getTour();if(!tour)return;
@@ -1114,57 +1125,6 @@ function renderFixtureList(){
 // ═══════════════════════════════════════════
 // QUICK SCORE
 // ═══════════════════════════════════════════
-function getTeamCoach(teamName){
-  const tour=getTour();
-  if(!tour||!tour.teams) return '';
-  const t=tour.teams.find(x=>x.name&&x.name.trim().toLowerCase()===(teamName||'').trim().toLowerCase());
-  return t&&t.coach?'🧢 '+t.coach:'';
-}
-
-function renderResultsEdit(){
-  const tour=getTour();
-  const el=document.getElementById('resultsEditGrid');
-  if(!el)return;
-  if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
-  const done=[...tour.matches.filter(m=>m.done)].reverse();
-  if(!done.length){el.innerHTML='<div class="empty">No completed matches yet</div>';return;}
-  const rounds=[...new Set(done.map(m=>m.round))];
-  let h='';
-  rounds.forEach(r=>{
-    const rm=done.filter(m=>m.round===r);
-    h+=`<div style="margin-bottom:1.2rem">
-      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-        <div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--green);padding:.2rem .8rem;background:rgba(6,255,165,.08);border:1px solid rgba(6,255,165,.25);border-radius:20px;white-space:nowrap">✅ ${r}</div>
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-      </div>`;
-    rm.forEach(m=>{
-      const homeWin=m.homeScore>m.awayScore, awayWin=m.awayScore>m.homeScore;
-      const hCoach=getTeamCoach(m.homeName), aCoach=getTeamCoach(m.awayName);
-      h+=`<div class="fix-card done" style="margin-bottom:.5rem;opacity:1;cursor:default">
-        <div class="fix-round">📅 ${m.date||'Date TBC'}</div>
-        <div class="fix-matchup">
-          <div class="fix-home-side">
-            <div class="fix-tname" style="${homeWin?'color:var(--green)':''}">${homeWin?'🏆 ':''}${m.homeName}</div>
-            ${hCoach?`<div class="fix-tcoach">${hCoach}</div>`:'<div class="fix-tcoach"></div>'}
-          </div>
-          <div class="fix-score-badge">
-            <div class="fix-score-num">${m.homeScore} – ${m.awayScore}</div>
-            <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
-          </div>
-          <div class="fix-away-side">
-            <div class="fix-tname" style="${awayWin?'color:var(--green)':''}">${m.awayName}${awayWin?' 🏆':''}</div>
-            ${aCoach?`<div class="fix-tcoach">${aCoach} </div>`:'<div class="fix-tcoach"></div>'}
-          </div>
-        </div>
-        <button class="fix-edit-btn" onclick="openEditScore('${m.id}')">✏️ EDIT THIS RESULT</button>
-      </div>`;
-    });
-    h+='</div>';
-  });
-  el.innerHTML=h;
-}
-
 function renderQS(){
   const tour=getTour();if(!tour)return;
   // Trim round names to fix any invisible whitespace that could break grouping
@@ -1193,18 +1153,10 @@ function renderQS(){
         <div class="fix-grid">
           ${rMatches.map(m=>`
           <div class="fix-card" onclick="openScore('${m.id}')">
-            <div class="fix-round">📅 ${m.date?m.date:'Date TBC'}</div>
-            <div class="fix-matchup">
-              <div class="fix-home-side">
-                <div class="fix-tname">🏠 ${m.homeName}</div>
-                <div class="fix-tcoach">${getTeamCoach(m.homeName)}</div>
-              </div>
-              <div class="fix-vs-badge">VS</div>
-              <div class="fix-away-side">
-                <div class="fix-tname">${m.awayName} ✈️</div>
-                <div class="fix-tcoach">${getTeamCoach(m.awayName)}</div>
-              </div>
-            </div>
+            <div class="fix-round">${m.date?m.date:'Date TBC'}</div>
+            <div class="fix-team">🏠 ${m.homeName}</div>
+            <div class="fix-vs">VS</div>
+            <div class="fix-team">✈️ ${m.awayName}</div>
             <button class="fix-tap">⚡ TAP TO ENTER SCORE</button>
           </div>`).join('')}
         </div>
@@ -1228,22 +1180,11 @@ function renderQS(){
         <div class="fix-grid">
           ${rMatches.map(m=>`
           <div class="fix-card done">
-            <div class="fix-round">📅 ${m.date||'Date TBC'}</div>
-            <div class="fix-matchup">
-              <div class="fix-home-side">
-                <div class="fix-tname" style="${m.homeScore>m.awayScore?'color:var(--green)':''}">🏠 ${m.homeName}</div>
-                <div class="fix-tcoach">${getTeamCoach(m.homeName)}</div>
-              </div>
-              <div class="fix-score-badge">
-                <div class="fix-score-num">${m.homeScore} – ${m.awayScore}</div>
-                <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
-              </div>
-              <div class="fix-away-side">
-                <div class="fix-tname" style="${m.awayScore>m.homeScore?'color:var(--green)':''}">${m.awayName} ✈️</div>
-                <div class="fix-tcoach">${getTeamCoach(m.awayName)}</div>
-              </div>
-            </div>
-            <button class="fix-edit-btn" onclick="event.stopPropagation();openEditScore('${m.id}')">✏️ EDIT RESULT</button>
+            <div class="fix-round">${m.date||''}</div>
+            <div class="fix-team" style="${m.homeScore>m.awayScore?'color:var(--green)':''}">🏠 ${m.homeName}</div>
+            <div class="fix-score">${m.homeScore} – ${m.awayScore}</div>
+            <div class="fix-team" style="${m.awayScore>m.homeScore?'color:var(--green)':''}">✈️ ${m.awayName}</div>
+            <div style="text-align:center;font-size:.7rem;color:var(--green);font-weight:700;margin-top:.5rem">✅ FINAL</div>
           </div>`).join('')}
         </div>
       </div>`;
@@ -1308,8 +1249,6 @@ function saveScore(){
   closeScore();sdb();updateAll();
   toast(`⚽ ${h.name} ${smH} – ${smA} ${a.name}`);
   checkPlayoffAlert();
-  // Refresh results edit tab if open
-  if(document.getElementById('tc-results')&&document.getElementById('tc-results').classList.contains('active'))renderResultsEdit();
 }
 
 // ═══════════════════════════════════════════
@@ -2100,6 +2039,7 @@ function deleteTournament(){
 // ═══════════════════════════════════════════
 function updateAll(){
   updateStats();renderQS();renderFixtureList();
+  if(document.getElementById('tc-results')&&document.getElementById('tc-results').classList.contains('active'))renderResultsEdit();
 }
 function toggleDashPw(id,btn){
   const input=document.getElementById(id);
@@ -2188,10 +2128,356 @@ function mergeTeams(){
   toast(`✅ Merged! "${oldTeam.name}" → "${keepTeam.name}"`);
 }
 
-// ── INIT ──
+// ═══════════════════════════════════════════
+// normalizeTour — crash prevention (NEW — PFL v31)
+// ═══════════════════════════════════════════
+function normalizeTour(t){
+  if(!t) return t;
+  if(!Array.isArray(t.teams))   t.teams=[];
+  if(!Array.isArray(t.matches)) t.matches=[];
+  if(!Array.isArray(t.groups))  t.groups=[];
+  if(!Array.isArray(t.playoffs))t.playoffs=[];
+  return t;
+}
+
+// ═══════════════════════════════════════════
+// TEAMS REGISTRY (NEW — PFL v31)
+// ═══════════════════════════════════════════
+let registryTeams = [];
+let editingRegId  = null;
+
+function loadRegistry(){
+  const raw=localStorage.getItem('jalala_registry');
+  if(raw){ try{ registryTeams=JSON.parse(raw); }catch(e){ registryTeams=[]; } }
+}
+function saveRegistry(){
+  localStorage.setItem('jalala_registry',JSON.stringify(registryTeams));
+}
+
+function toggleRegistryForm(){
+  editingRegId=null;
+  document.getElementById('regFormTitle').textContent='➕ New Team';
+  document.getElementById('regName').value='';
+  document.getElementById('regCoach').value='';
+  const wrap=document.getElementById('regFormWrap');
+  wrap.style.display=wrap.style.display==='none'?'block':'none';
+}
+
+function cancelRegistryForm(){
+  editingRegId=null;
+  document.getElementById('regFormWrap').style.display='none';
+}
+
+function editRegistryTeam(tid){
+  const t=registryTeams.find(x=>x.id===tid);
+  if(!t) return;
+  editingRegId=tid;
+  document.getElementById('regFormTitle').textContent='✏️ Edit Team';
+  document.getElementById('regName').value=t.name||'';
+  document.getElementById('regCoach').value=t.coach||'';
+  document.getElementById('regFormWrap').style.display='block';
+  document.getElementById('regFormWrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function saveRegistryTeam(){
+  const name=document.getElementById('regName').value.trim();
+  const coach=document.getElementById('regCoach').value.trim();
+  if(!name){toast('Enter team name',true);return;}
+
+  if(editingRegId){
+    // Update existing
+    const t=registryTeams.find(x=>x.id===editingRegId);
+    if(!t){toast('Team not found',true);return;}
+    t.name=name; t.coach=coach;
+    // Cascade name update to all tournaments
+    db.tournaments.forEach(tour=>{
+      normalizeTour(tour);
+      const tt=tour.teams.find(x=>x.id===t.id||x.name.toLowerCase()===t.name.toLowerCase());
+      if(tt){ tt.name=name; tt.coach=coach; }
+      tour.matches.forEach(m=>{
+        if(m.homeName&&m.homeName.toLowerCase()===t.name.toLowerCase()) m.homeName=name;
+        if(m.awayName&&m.awayName.toLowerCase()===t.name.toLowerCase()) m.awayName=name;
+      });
+    });
+  } else {
+    if(registryTeams.some(t=>t.name.toLowerCase()===name.toLowerCase())){
+      toast(`${name} is already in the registry`,true); return;
+    }
+    const newTeam={id:'reg_'+Date.now(),name,coach,badge:'⚽',dateCreated:new Date().toISOString().slice(0,10)};
+    registryTeams.push(newTeam);
+  }
+
+  saveRegistry();
+  // Firebase sync
+  if(window._fbSaveRegTeam){
+    const tid=editingRegId||registryTeams[registryTeams.length-1].id;
+    const t=registryTeams.find(x=>x.id===tid);
+    if(t) window._fbSaveRegTeam(t.id,t).catch(err=>console.error('Registry sync failed:',err));
+  }
+  cancelRegistryForm();
+  renderRegistry();
+  toast(editingRegId?'✅ Team updated!':'✅ Team added to registry!');
+  editingRegId=null;
+}
+
+function deleteRegistryTeam(tid){
+  const t=registryTeams.find(x=>x.id===tid);
+  if(!t)return;
+  if(!confirm(`Delete "${t.name}" from the registry?\n\nThis only removes them from the registry — it won't affect existing tournament data.`))return;
+  registryTeams=registryTeams.filter(x=>x.id!==tid);
+  saveRegistry();
+  if(window._fbDeleteRegTeam) window._fbDeleteRegTeam(tid).catch(err=>console.error('Registry delete failed:',err));
+  renderRegistry();
+  toast('Team removed from registry');
+}
+
+function renderRegistry(){
+  const el=document.getElementById('regList');
+  if(!el)return;
+  if(!registryTeams.length){
+    el.innerHTML='<div class="empty" style="padding:1.5rem">No teams in registry yet</div>';
+    return;
+  }
+  const sorted=registryTeams.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  el.innerHTML=sorted.map(t=>`
+    <div class="t-card" style="cursor:default">
+      <div style="display:flex;align-items:center;gap:.8rem;flex:1;min-width:0">
+        <div style="font-size:1.6rem;flex-shrink:0">${t.badge||'⚽'}</div>
+        <div style="min-width:0">
+          <div class="t-card-name">${t.name}</div>
+          <div class="t-card-meta">${t.coach?'🧢 '+t.coach:'No coach'} · Added ${t.dateCreated||'—'}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-shrink:0">
+        <button class="del-btn" style="border-color:var(--gold);color:var(--gold)" onclick="editRegistryTeam('${t.id}')">✏️</button>
+        <button class="del-btn" onclick="deleteRegistryTeam('${t.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+// Populate registry dropdown in the Add Team form (NEW)
+function buildRegistryDropdown(){
+  const sel=document.getElementById('addTeamSelect');
+  if(!sel)return;
+  const tour=getTour();
+  const existing=tour?(tour.teams||[]).map(t=>t.name.toLowerCase()):[];
+  const available=registryTeams.filter(t=>!existing.includes(t.name.toLowerCase()));
+  sel.innerHTML='<option value="">-- Select a registered team --</option>'+
+    available.map(t=>`<option value="${t.id}">${t.name}${t.coach?' ('+t.coach+')':''}</option>`).join('');
+}
+
+// Helper for renderResultsEdit — get coach from registry or team obj
+function getTeamCoach(teamName){
+  if(!teamName)return'';
+  const reg=registryTeams.find(r=>r.name&&r.name.toLowerCase()===teamName.toLowerCase());
+  if(reg&&reg.coach)return'🧢 '+reg.coach;
+  const tour=getTour();
+  if(tour){const t=(tour.teams||[]).find(x=>x.name===teamName);if(t&&t.coach)return'🧢 '+t.coach;}
+  return'';
+}
+
+// ═══════════════════════════════════════════
+// RESULTS TAB — Editable grid (NEW — PFL v31)
+// ═══════════════════════════════════════════
+function renderResultsEdit(){
+  const tour=getTour();
+  const el=document.getElementById('resultsEditGrid');
+  if(!el)return;
+  if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
+  normalizeTour(tour);
+  const done=[...tour.matches.filter(m=>m.done)].reverse();
+  if(!done.length){el.innerHTML='<div class="empty">No completed matches yet</div>';return;}
+  const rounds=[...new Set(done.map(m=>m.round))];
+  let h='';
+  rounds.forEach(r=>{
+    const rm=done.filter(m=>m.round===r);
+    h+=`<div style="margin-bottom:1.2rem">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--green);padding:.2rem .8rem;background:rgba(6,255,165,.08);border:1px solid rgba(6,255,165,.25);border-radius:20px;white-space:nowrap">✅ ${r}</div>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>`;
+    rm.forEach(m=>{
+      const homeWin=m.homeScore>m.awayScore, awayWin=m.awayScore>m.homeScore;
+      const hCoach=getTeamCoach(m.homeName), aCoach=getTeamCoach(m.awayName);
+      h+=`<div style="background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;margin-bottom:.5rem;overflow:hidden;position:relative">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--green)"></div>
+        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.55rem">📅 ${m.date||'Date TBC'}</div>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${homeWin?'color:var(--green)':''}">${homeWin?'🏆 ':''}${m.homeName}</div>
+            ${hCoach?`<div style="font-size:.68rem;color:var(--gold);margin-top:.1rem">${hCoach}</div>`:''}
+          </div>
+          <div style="flex-shrink:0;text-align:center;min-width:52px">
+            <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold);letter-spacing:3px;line-height:1">${m.homeScore} – ${m.awayScore}</div>
+            <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
+          </div>
+          <div style="flex:1;min-width:0;text-align:right">
+            <div style="font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${awayWin?'color:var(--green)':''}">
+              ${m.awayName}${awayWin?' 🏆':''}
+            </div>
+            ${aCoach?`<div style="font-size:.68rem;color:var(--gold);margin-top:.1rem;text-align:right">${aCoach}</div>`:''}
+          </div>
+        </div>
+        <button onclick="openEditScore('${m.id}')" style="width:100%;padding:.4rem;background:rgba(77,159,255,.1);color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.72rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px">✏️ EDIT THIS RESULT</button>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// MARK AS FINISHED (NEW — PFL v31)
+// ═══════════════════════════════════════════
+function markTournamentFinished(){
+  const tour=getTour();if(!tour)return;
+  if(tour.status==='finished'){
+    if(!confirm('This tournament is already marked as finished.\nRestore it to active?'))return;
+    tour.status='active';
+    sdb();toast('Tournament restored to active');
+    document.getElementById('markFinishedWrap').querySelector('button').textContent='🏁 MARK AS FINISHED';
+    return;
+  }
+  const pending=(tour.matches||[]).filter(m=>!m.done).length;
+  const msg=pending>0
+    ?`Mark "${tour.name}" as FINISHED?\n\n⚠️ There are still ${pending} unplayed match${pending>1?'es':''}.\n\nIt will move to Past Seasons on the public page.`
+    :`Mark "${tour.name}" as FINISHED?\n\nIt will move to Past Seasons on the public page.`;
+  if(!confirm(msg))return;
+  tour.status='finished';
+  sdb();
+  toast('🏁 Tournament marked as finished!');
+  const btn=document.getElementById('markFinishedWrap').querySelector('button');
+  if(btn){ btn.textContent='↩️ RESTORE TO ACTIVE'; btn.style.background='rgba(6,255,165,.1)'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)'; }
+}
+
+// ═══════════════════════════════════════════
+// UPDATED showTab — adds Results + registry dropdown
+// ═══════════════════════════════════════════
+function showTab(name){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  const tc=document.getElementById('tc-'+name);
+  const tb=document.getElementById('tab-'+name);
+  if(tc) tc.classList.add('active');
+  if(tb) tb.classList.add('active');
+  if(name==='table')renderTable();
+  if(name==='teams'){renderTeams();buildRegistryDropdown();}
+  if(name==='results')renderResultsEdit();
+  if(name==='playoffs'){renderPlayoffs();checkPlayoffAlertFull();}
+  if(name==='rules')loadRulesEditor();
+  if(name==='settings'){
+    const tour=getTour();
+    const btn=document.querySelector('#markFinishedWrap button');
+    if(btn&&tour){
+      if(tour.status==='finished'){
+        btn.textContent='↩️ RESTORE TO ACTIVE';
+        btn.style.background='rgba(6,255,165,.1)';
+        btn.style.borderColor='var(--green)';
+        btn.style.color='var(--green)';
+      } else {
+        btn.textContent='🏁 MARK AS FINISHED';
+        btn.style.background='rgba(212,175,55,.15)';
+        btn.style.borderColor='var(--gold)';
+        btn.style.color='var(--gold)';
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// UPDATED addTeam — registry-aware (NEW — PFL v31)
+// ═══════════════════════════════════════════
+// Override the existing addTeam
+function addTeam(){
+  const tour=getTour();if(!tour)return;
+  normalizeTour(tour);
+  const sel=document.getElementById('addTeamSelect');
+  const selVal=sel?sel.value:'';
+  const g=tour.format==='groups'?document.getElementById('addGroup').value:'';
+
+  if(selVal){
+    // Picked from registry
+    const regTeam=registryTeams.find(x=>x.id===selVal);
+    if(!regTeam){toast('Team not found in registry',true);return;}
+    if(tour.teams.some(t=>t.name.toLowerCase()===regTeam.name.toLowerCase())){
+      toast(`${regTeam.name} is already in this tournament`,true);return;
+    }
+    tour.teams.push({id:'team_'+Date.now(),name:regTeam.name,coach:regTeam.coach||'',group:g,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
+    if(sel) sel.value='';
+    sdb();buildTeamSelects();renderTeams();buildRegistryDropdown();toast(`${regTeam.name} added!`);
+    return;
+  }
+
+  // New team typed manually — save to tournament AND registry
+  const n=document.getElementById('addTeamName').value.trim();
+  const c=document.getElementById('addCoach').value.trim();
+  if(!n){toast('Select a team or enter a new team name',true);return;}
+  if(tour.teams.some(t=>t.name.toLowerCase()===n.toLowerCase())){
+    toast(`${n} is already in this tournament`,true);return;
+  }
+  const g2=tour.format==='groups'?document.getElementById('addGroup').value:'';
+  tour.teams.push({id:'team_'+Date.now(),name:n,coach:c,group:g2,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
+  document.getElementById('addTeamName').value='';
+  document.getElementById('addCoach').value='';
+  // Auto-add to registry if not already there
+  if(!registryTeams.some(t=>t.name.toLowerCase()===n.toLowerCase())){
+    const newReg={id:'reg_'+Date.now(),name:n,coach:c,badge:'⚽',dateCreated:new Date().toISOString().slice(0,10)};
+    registryTeams.push(newReg);
+    saveRegistry();
+    if(window._fbSaveRegTeam) window._fbSaveRegTeam(newReg.id,newReg).catch(err=>console.error('Registry sync failed:',err));
+  }
+  sdb();buildTeamSelects();renderTeams();buildRegistryDropdown();toast(`${n} added to tournament & registry!`);
+}
+
+// ═══════════════════════════════════════════
+// UPDATED renderList — shows FINISHED badge (NEW)
+// ═══════════════════════════════════════════
+function renderList(){
+  const el=document.getElementById('tList');
+  if(!db.tournaments.length){el.innerHTML='<div class="t-empty"><div class="t-empty-icon">🏆</div><p>No tournaments yet.<br>Create one below!</p></div>';return;}
+  el.innerHTML=db.tournaments.map(t=>`
+    <div class="t-card" onclick="openTour('${t.id}')">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div class="t-card-name">${t.name}</div>
+          ${t.status==='finished'?'<span style="font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:.1rem .4rem;border-radius:3px;background:rgba(212,175,55,.15);color:var(--gold);flex-shrink:0">🏁 FINISHED</span>':''}
+        </div>
+        <div class="t-card-meta">${t.season||''} · ${t.format==='league'?'League':'Groups'} · ${(t.teams||[]).length} teams · ${(t.matches||[]).filter(m=>m.done).length} results</div>
+      </div>
+      <span class="t-card-badge">${t.format==='league'?'📋':'🏟️'}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// FIREBASE REGISTRY HOOKS (module-level, NEW)
+// ═══════════════════════════════════════════
+// These are set by the Firebase module script below
+// They're called here after the module fires
+
+function initRegistrySync(){
+  if(!window._fbLoadRegistry||!window._authReady){ setTimeout(initRegistrySync,300); return; }
+  window._fbLoadRegistry().then(data=>{
+    if(!data)return;
+    const cloudTeams=Object.values(data);
+    let changed=false;
+    cloudTeams.forEach(ct=>{
+      const idx=registryTeams.findIndex(x=>x.id===ct.id);
+      if(idx===-1){ registryTeams.push(ct); changed=true; }
+      else { registryTeams[idx]=ct; changed=true; }
+    });
+    if(changed){ saveRegistry(); renderRegistry(); buildRegistryDropdown(); }
+  }).catch(()=>{});
+}
+
+// ── UPDATED INIT — also loads registry ──────────────────────────
+// Override old init sequence at bottom of original script
 checkSession();
-gdb(); // load from localStorage instantly
+gdb();
+loadRegistry();
 renderList();
+renderRegistry();
+initRegistrySync();
 
 // Then pull from Firebase and merge (in case admin switched device)
 function initFirebaseSync(){
