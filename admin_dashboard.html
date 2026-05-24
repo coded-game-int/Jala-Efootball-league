@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard – PFL Zone</title>
+<title>Admin Dashboard – JALALA Zone</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -92,25 +92,18 @@ select option{background:#0d0d1a}
 .stat-l{font-size:.62rem;color:var(--muted);text-transform:uppercase;margin-top:.2rem}
 
 /* ─── FIXTURE CARDS ─── */
-.fix-grid{display:flex;flex-direction:column;gap:.7rem}
-.fix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.fix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.8rem}
+.fix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s;position:relative}
 .fix-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--gold)}
-.fix-card:hover{border-color:var(--green);box-shadow:0 4px 16px rgba(6,255,165,.12)}
+.fix-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 6px 20px rgba(6,255,165,.12)}
 .fix-card:hover::before{background:var(--green)}
-.fix-card.done{opacity:.7;cursor:default}.fix-card.done:hover{border-color:var(--border);box-shadow:none}
+.fix-card.done{opacity:.6;cursor:default}.fix-card.done:hover{transform:none;border-color:var(--border)}
 .fix-card.done::before{background:var(--green)}
-.fix-round{font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.55rem}
-.fix-matchup{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
-.fix-team-side{flex:1;min-width:0}
-.fix-team-name{font-weight:800;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
-.fix-team-coach{font-size:.68rem;color:var(--gold);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fix-away-side{flex:1;min-width:0;text-align:right}
-.fix-away-side .fix-team-name{text-align:right}
-.fix-away-side .fix-team-coach{text-align:right}
-.fix-vs-badge{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;color:var(--muted);letter-spacing:.5px}
+.fix-round{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.6rem}
+.fix-team{font-weight:700;font-size:.9rem;padding:.25rem 0}
 .fix-vs{text-align:center;font-size:.65rem;color:var(--muted);letter-spacing:2px;font-weight:700}
 .fix-score{text-align:center;font-family:'Bebas Neue';font-size:2rem;color:var(--gold);letter-spacing:3px;margin:.2rem 0}
-.fix-tap{width:100%;padding:.5rem;background:rgba(6,255,165,.1);color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.fix-tap{margin-top:.7rem;width:100%;padding:.5rem;background:rgba(6,255,165,.1);color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.75rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
 .fix-tap:hover{background:rgba(6,255,165,.2)}
 
 /* ─── SCORE MODAL ─── */
@@ -182,19 +175,14 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
 .seg-btn{flex:1;padding:.5rem;background:none;border:none;color:var(--muted);font-family:'Barlow';font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;text-align:center}
 .seg-btn.on{background:rgba(212,175,55,.15);color:var(--gold)}
 
-/* ─── VOID MATCH ─── */
-.fix-card.voided{opacity:.5;border-color:var(--red)!important;cursor:default}
-.fix-card.voided::before{background:var(--red)!important}
-.void-badge{display:inline-block;font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:.1rem .4rem;border-radius:3px;background:rgba(255,51,85,.18);color:var(--red);text-transform:uppercase;margin-left:.4rem}
-
-@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}.fix-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div><div class="tb-brand"><img src="jalala_logo.png" alt="PFL" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:6px;border:1px solid rgba(212,175,55,.5)"> PFL Zone</div><div class="tb-sub">Admin Dashboard</div></div>
+  <div><div class="tb-brand">⚽ JALALA Zone</div><div class="tb-sub">Admin Dashboard</div></div>
   <div class="tb-right">
     <span id="syncStatus" style="font-size:.7rem;font-weight:700;letter-spacing:.5px;color:var(--muted)">☁️ Firebase</span>
     <span class="warn-badge" id="warnBadge" style="display:none" onclick="showTab('settings')">⚠ Change PW</span>
@@ -214,20 +202,20 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
   <div id="tList"><div class="t-empty"><div class="t-empty-icon">🏆</div><p>No tournaments yet.<br>Create one below!</p></div></div>
   <button class="btn-create" onclick="startWizard()">+ CREATE NEW TOURNAMENT</button>
 
-  <!-- ── TEAMS REGISTRY ── -->
+  <!-- ── TEAMS REGISTRY (NEW — PFL v31) ── -->
   <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
       <div class="t-list-title" style="margin-bottom:0">👥 Teams Registry</div>
       <button class="btn-sm" style="border-color:var(--gold);color:var(--gold)" onclick="toggleRegistryForm()">+ New Team</button>
     </div>
-    <div class="info" style="margin-bottom:1rem">Teams created here exist permanently — visible on the public page even before any tournament starts.</div>
+    <div class="info" style="margin-bottom:1rem">Teams created here exist permanently — visible on the public page even before any tournament starts. Adding a team during a tournament auto-saves them here too.</div>
 
-    <!-- New team form (hidden by default) -->
+    <!-- New/Edit team form (hidden by default) -->
     <div id="regFormWrap" style="display:none">
       <div class="card" style="margin-bottom:1rem">
         <div class="card-title" id="regFormTitle">➕ New Team</div>
         <label class="lbl">Team Name</label>
-        <input type="text" id="regName" placeholder="e.g. FC Prime United">
+        <input type="text" id="regName" placeholder="e.g. FC Jalala United">
         <label class="lbl">Coach Name</label>
         <input type="text" id="regCoach" placeholder="Coach name">
         <div style="display:flex;gap:.7rem">
@@ -257,7 +245,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
     <div class="step active" id="wiz1">
       <div class="step-title">Tournament Name</div>
       <label class="lbl">Name</label>
-      <input type="text" id="wizName" placeholder="e.g. PFL Zone Season 2">
+      <input type="text" id="wizName" placeholder="e.g. JALALA Zone Season 2">
       <label class="lbl">Season / Description (optional)</label>
       <input type="text" id="wizSeason" placeholder="e.g. April 2026">
       <button class="btn-full btn-gold" onclick="wizNext(1)">NEXT →</button>
@@ -347,7 +335,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
       <div class="step-title">Register Teams</div>
       <div class="card" style="margin-bottom:.8rem">
         <label class="lbl">Team Name</label>
-        <input type="text" id="wizTeamName" placeholder="e.g. FC Prime United">
+        <input type="text" id="wizTeamName" placeholder="e.g. FC Jalala United">
         <label class="lbl">Coach Name</label>
         <input type="text" id="wizCoach" placeholder="Coach name">
         <div id="wizGroupRow" style="display:none">
@@ -385,8 +373,8 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
 
   <div class="tabs">
     <button class="tab qs-tab active" onclick="showTab('qs')" id="tab-qs">⚡ Quick Score</button>
-    <button class="tab" onclick="showTab('schedule')" id="tab-schedule">📅 Schedule</button>
     <button class="tab" onclick="showTab('results')" id="tab-results">✅ Results</button>
+    <button class="tab" onclick="showTab('schedule')" id="tab-schedule">📅 Schedule</button>
     <button class="tab" onclick="showTab('table')" id="tab-table">📊 Table</button>
     <button class="tab" onclick="showTab('teams')" id="tab-teams">👥 Teams</button>
     <button class="tab" onclick="showTab('playoffs')" id="tab-playoffs">🏆 Playoffs</button>
@@ -400,7 +388,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
       <div class="stat"><div class="stat-n" id="st-teams" style="color:var(--gold)">0</div><div class="stat-l">Teams</div></div>
       <div class="stat"><div class="stat-n" id="st-played" style="color:var(--green)">0</div><div class="stat-l">Played</div></div>
       <div class="stat"><div class="stat-n" id="st-pending" style="color:#ffa300">0</div><div class="stat-l">Pending</div></div>
-      <div class="stat"><div class="stat-n" id="st-voided" style="color:var(--red)">0</div><div class="stat-l">Voided</div></div>
+      <div class="stat"><div class="stat-n" id="st-goals" style="color:var(--blue)">0</div><div class="stat-l">Goals</div></div>
     </div>
     <div id="playoffAlertBox"></div>
     <div class="card">
@@ -411,9 +399,14 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
       <div class="card-title">✅ Completed</div>
       <div id="doneGrid" class="fix-grid"><div class="empty">No completed matches yet</div></div>
     </div>
-    <div class="card" id="voidedCard" style="display:none">
-      <div class="card-title" style="color:var(--red)">🚫 Voided Matches</div>
-      <div id="voidedGrid" class="fix-grid"></div>
+  </div>
+
+  <!-- RESULTS (NEW — PFL v31) -->
+  <div class="tab-content" id="tc-results">
+    <div class="card">
+      <div class="card-title" style="color:var(--green)">✅ Completed Results</div>
+      <div class="info" style="margin-bottom:.8rem">Tap <strong>✏️ Edit</strong> on any result to correct a wrong score. Stats are automatically recalculated.</div>
+      <div id="resultsEditGrid"><div class="empty">No completed matches yet</div></div>
     </div>
   </div>
 
@@ -438,33 +431,12 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
       <button class="btn-full btn-outline" onclick="autoGenFixtures()">GENERATE ALL FIXTURES</button>
     </div>
     <div class="card">
-      <div class="card-title" style="color:var(--red)">🚫 Void Outstanding Matches</div>
-      <div class="info info-red" style="margin-bottom:.8rem">
-        Marks all <strong>unplayed</strong> matches as <strong>VOID</strong> — no points are given to anyone. Useful when a deadline (e.g. 12:00) passes and some teams haven't played.<br><br>
-        Voided matches stay visible but are clearly marked null. Teams that played and lost keep their result — only unplayed matches are affected.
-      </div>
-      <div style="margin-bottom:.8rem">
-        <label class="lbl">Void matches in round (optional — leave blank to void ALL pending)</label>
-        <input type="text" id="voidRoundInput" placeholder="e.g. Matchday 3 — or leave blank for all pending" list="roundHints" style="margin-bottom:.5rem">
-      </div>
-      <button class="btn-full btn-red" onclick="voidOutstandingMatches()">🚫 VOID OUTSTANDING MATCHES</button>
-    </div>
-    <div class="card">
       <div class="card-title">📋 All Fixtures</div>
       <div id="allFixtures"><div class="empty">No fixtures yet</div></div>
     </div>
   </div>
 
   <!-- TABLE -->
-  <!-- RESULTS -->
-  <div class="tab-content" id="tc-results">
-    <div class="card">
-      <div class="card-title" style="color:var(--green)">✅ Completed Results</div>
-      <div class="info" style="margin-bottom:.8rem">Tap ✏️ Edit on any result to correct a wrong score. Stats are automatically recalculated.</div>
-      <div id="resultsEditGrid"><div class="empty">No completed matches yet</div></div>
-    </div>
-  </div>
-
   <div class="tab-content" id="tc-table">
     <div id="tableView"><div class="empty">No data yet</div></div>
   </div>
@@ -473,6 +445,7 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
   <div class="tab-content" id="tc-teams">
     <div class="card">
       <div class="card-title">➕ Add Team</div>
+      <!-- Pick from Registry (NEW) -->
       <label class="lbl">Pick from Registry</label>
       <select id="addTeamSelect" style="width:100%;padding:.6rem;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:6px;font-family:'Barlow';font-size:.95rem">
         <option value="">-- Select a registered team --</option>
@@ -595,6 +568,11 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
     </div>
     <div class="card">
       <div class="card-title" style="color:var(--red)">🔴 Danger Zone</div>
+      <!-- Mark as Finished (NEW — PFL v31) -->
+      <div id="markFinishedWrap" style="margin-bottom:.6rem">
+        <button class="btn-full" style="background:rgba(212,175,55,.15);border:1.5px solid var(--gold);color:var(--gold);padding:.85rem;border-radius:8px;font-family:'Barlow';font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;width:100%" onclick="markTournamentFinished()">🏁 MARK AS FINISHED</button>
+        <div class="info" style="margin-top:.5rem;font-size:.75rem">Marks this season as complete. It moves to Past Seasons on the public page.</div>
+      </div>
       <button class="btn-full btn-red" onclick="resetResults()" style="margin-bottom:.6rem">RESET ALL RESULTS</button>
       <button class="btn-full btn-red" onclick="deleteTournament()">DELETE THIS TOURNAMENT</button>
     </div>
@@ -632,13 +610,12 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
 <!-- SCORE MODAL -->
 <div class="overlay" id="scoreOverlay">
   <div class="modal">
-    <div class="modal-title" style="color:var(--green)">🥅 Enter Score <button class="modal-close" onclick="closeScore()">✕</button></div>
+    <div class="modal-title" style="color:var(--green)">⚽ Enter Score <button class="modal-close" onclick="closeScore()">✕</button></div>
     <div style="text-align:center;font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.5rem" id="smRound"></div>
     <div id="smEditMode" style="display:none;text-align:center;background:rgba(255,163,0,.1);border:1px solid #ffa300;border-radius:6px;padding:.4rem;margin-bottom:.6rem;font-size:.72rem;color:#ffa300;font-weight:700">✏️ EDITING EXISTING RESULT — stats will be recalculated</div>
     <div class="score-entry">
       <div class="score-side">
         <div class="score-team" id="smHome"></div>
-        <div id="smHomeCoach" style="font-size:.68rem;color:var(--gold);margin-bottom:.3rem;min-height:.9rem"></div>
         <div class="sc-num" id="smHnum">0</div>
         <div class="sc-btns">
           <button class="sc-btn sc-minus" onclick="adj('h',-1)">−</button>
@@ -648,7 +625,6 @@ td.pts{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold)}
       <div class="vs-sep">VS</div>
       <div class="score-side">
         <div class="score-team" id="smAway"></div>
-        <div id="smAwayCoach" style="font-size:.68rem;color:var(--gold);margin-bottom:.3rem;min-height:.9rem"></div>
         <div class="sc-num" id="smAnum">0</div>
         <div class="sc-btns">
           <button class="sc-btn sc-minus" onclick="adj('a',-1)">−</button>
@@ -669,13 +645,13 @@ import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/1
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA-aPVuy1q8VBT7Utbn374EdQM3CpCrY0I",
-  authDomain: "prime-efootball-league-pfl.firebaseapp.com",
-  projectId: "prime-efootball-league-pfl",
-  storageBucket: "prime-efootball-league-pfl.firebasestorage.app",
-  messagingSenderId: "787228989452",
-  appId: "1:787228989452:web:6273826b83aa86fe37fa1d",
-  databaseURL: "https://prime-efootball-league-pfl-default-rtdb.firebaseio.com"
+  apiKey: "AIzaSyCYHVDq8D492xais1q06ra4GtzNawpsNEA",
+  authDomain: "jalala-zone.firebaseapp.com",
+  projectId: "jalala-zone",
+  storageBucket: "jalala-zone.firebasestorage.app",
+  messagingSenderId: "1017844260648",
+  appId: "1:1017844260648:web:6273826b83aa86fe37fa1d",
+  databaseURL: "https://jalala-zone-default-rtdb.firebaseio.com"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -703,7 +679,9 @@ window._fbLoadAll = () => {
   return get(r).then(snap => snap.val());
 };
 
-// Registry: save/load/delete a single team
+window._fbReady = true;
+
+// ── Registry Firebase hooks (NEW — PFL v31) ──
 window._fbSaveRegTeam = (tid, teamData) => {
   const r = ref(database, 'registry/' + tid);
   return set(r, teamData);
@@ -716,8 +694,6 @@ window._fbLoadRegistry = () => {
   const r = ref(database, 'registry');
   return get(r).then(snap => snap.val());
 };
-
-window._fbReady = true;
 </script>
 
 <script>
@@ -732,13 +708,13 @@ let wizStep = 1;
 let poFmt = 1;
 
 // ── HELPERS ──
-function gdb(){const d=localStorage.getItem('pfl_db');if(d)db=JSON.parse(d);}
+function gdb(){const d=localStorage.getItem('jalala_db');if(d)db=JSON.parse(d);}
 function sdb(){
   // Stamp every save with current time
   const tour=getTour();
   if(tour) tour.updatedAt=Date.now();
   // Always save locally first (instant, no internet needed)
-  localStorage.setItem('pfl_db',JSON.stringify(db));
+  localStorage.setItem('jalala_db',JSON.stringify(db));
   // Then push active tournament to Firebase
   if(tour && window._fbSaveTour){
     setSyncStatus('saving');
@@ -764,7 +740,7 @@ function hide(id){document.getElementById(id).style.display='none';}
 function checkSession(){
   // Auth is handled by Firebase onAuthStateChanged in the module above
   // Just show/hide the change password warning badge
-  const a=JSON.parse(localStorage.getItem('pfl_admin')||'{"changed":false}');
+  const a=JSON.parse(localStorage.getItem('jalala_admin')||'{"changed":false}');
   document.getElementById('warnBadge').style.display=a.changed?'none':'inline-block';
 }
 function doLogout(){
@@ -780,18 +756,7 @@ function doLogout(){
 // ═══════════════════════════════════════════
 // TOURNAMENT LIST
 // ═══════════════════════════════════════════
-function renderList(){
-  const el=document.getElementById('tList');
-  if(!db.tournaments.length){el.innerHTML='<div class="t-empty"><div class="t-empty-icon">🏆</div><p>No tournaments yet.<br>Create one below!</p></div>';return;}
-  el.innerHTML=db.tournaments.map(t=>`
-    <div class="t-card" onclick="openTour('${t.id}')">
-      <div>
-        <div class="t-card-name">${t.name}</div>
-        <div class="t-card-meta">${t.season||''} · ${t.format==='league'?'League':'Groups'} · ${(t.teams||[]).length} teams · ${(t.matches||[]).filter(m=>m.done).length} results</div>
-      </div>
-      <span class="t-card-badge">${t.format==='league'?'📋':'🏟️'}</span>
-    </div>`).join('');
-}
+// renderList — defined below with FINISHED badge support (PFL v31 upgrade)
 
 // ═══════════════════════════════════════════
 // WIZARD
@@ -953,16 +918,6 @@ function wizLaunch(){
 // ═══════════════════════════════════════════
 // OPEN TOURNAMENT DASHBOARD
 // ═══════════════════════════════════════════
-// Ensure all array fields exist — prevents crashes when loading from Firebase
-function normalizeTour(t){
-  if(!t) return t;
-  if(!Array.isArray(t.teams)) t.teams=[];
-  if(!Array.isArray(t.matches)) t.matches=[];
-  if(!Array.isArray(t.groups)) t.groups=[];
-  if(!Array.isArray(t.playoffs)) t.playoffs=[];
-  return t;
-}
-
 function openTour(tid){
   activeTid=tid;
   const tour=getTour();
@@ -989,17 +944,7 @@ function backToList(){
 // ═══════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════
-function showTab(name){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tc-'+name).classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
-  if(name==='table')renderTable();
-  if(name==='results')renderResultsEdit();
-  if(name==='teams'){renderTeams();buildRegistryDropdown();}
-  if(name==='playoffs'){renderPlayoffs();checkPlayoffAlertFull();}
-  if(name==='rules')loadRulesEditor();
-}
+// showTab — defined below with Results tab + registry dropdown + settings badge (PFL v31 upgrade)
 
 // ═══════════════════════════════════════════
 // TEAMS
@@ -1018,64 +963,11 @@ function buildGroupSel(){
 
 function buildTeamSelects(){
   const tour=getTour();if(!tour)return;
-  normalizeTour(tour);
   const h='<option value="">-- Team --</option>'+tour.teams.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
   ['schHome','schAway','po1','po2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h;});
 }
 
-function addTeam(){
-  const tour=getTour();if(!tour)return;
-  normalizeTour(tour);
-  const sel=document.getElementById('addTeamSelect');
-  const selVal=sel?sel.value:'';
-  const g=tour.format==='groups'?document.getElementById('addGroup').value:'';
-
-  if(selVal){
-    // Picked from registry
-    const regTeam=registryTeams.find(x=>x.id===selVal);
-    if(!regTeam){toast('Team not found in registry',true);return;}
-    if(tour.teams.some(t=>t.name.toLowerCase()===regTeam.name.toLowerCase())){
-      toast(`${regTeam.name} is already in this tournament`,true);return;
-    }
-    tour.teams.push({id:'team_'+Date.now(),name:regTeam.name,coach:regTeam.coach||'',group:g,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
-    if(sel) sel.value='';
-    sdb();buildTeamSelects();renderTeams();buildRegistryDropdown();toast(`${regTeam.name} added!`);
-    return;
-  }
-
-  // New team — save to tournament AND registry
-  const n=document.getElementById('addTeamName').value.trim();
-  const c=document.getElementById('addCoach').value.trim();
-  if(!n){toast('Select a team or enter a new team name',true);return;}
-  if(tour.teams.some(t=>t.name.toLowerCase()===n.toLowerCase())){
-    toast(`${n} is already in this tournament`,true);return;
-  }
-  const g2=tour.format==='groups'?document.getElementById('addGroup').value:'';
-  tour.teams.push({id:'team_'+Date.now(),name:n,coach:c,group:g2,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
-  document.getElementById('addTeamName').value='';
-  document.getElementById('addCoach').value='';
-
-  // Also save to registry if not already there
-  if(!registryTeams.some(t=>t.name.toLowerCase()===n.toLowerCase())){
-    const newReg={id:'reg_'+Date.now(),name:n,coach:c,badge:'⚽',dateCreated:new Date().toISOString().slice(0,10)};
-    registryTeams.push(newReg);
-    saveRegistry();
-    if(window._fbSaveRegTeam) window._fbSaveRegTeam(newReg.id,newReg).catch(err=>console.error('Registry sync failed:',err));
-  }
-
-  sdb();buildTeamSelects();renderTeams();buildRegistryDropdown();toast(`${n} added to tournament & registry!`);
-}
-
-// Populate the registry dropdown in the Add Team form
-function buildRegistryDropdown(){
-  const sel=document.getElementById('addTeamSelect');
-  if(!sel)return;
-  const tour=getTour();
-  const existing=tour?(tour.teams||[]).map(t=>t.name.toLowerCase()):[];
-  const available=registryTeams.filter(t=>!existing.includes(t.name.toLowerCase()));
-  sel.innerHTML='<option value="">-- Select a registered team --</option>'+
-    available.map(t=>`<option value="${t.id}">${t.name}${t.coach?' ('+t.coach+')':''}</option>`).join('');
-}
+// addTeam — defined below with registry-aware logic (PFL v31 upgrade)
 
 function deleteTeam(tid){
   const tour=getTour();if(!tour)return;
@@ -1094,8 +986,7 @@ function deleteTeam(tid){
 }
 
 function renderTeams(){
-  const tour=getTour();
-  if(tour) normalizeTour(tour);if(!tour)return;
+  const tour=getTour();if(!tour)return;
   const el=document.getElementById('teamsList');
   if(!tour.teams.length){el.innerHTML='<div class="empty">No teams</div>';return;}
   el.innerHTML=tour.teams.map(t=>`
@@ -1191,8 +1082,7 @@ function deleteFixture(mid){
 }
 
 function renderFixtureList(){
-  const tour=getTour();
-  if(tour) normalizeTour(tour);if(!tour)return;
+  const tour=getTour();if(!tour)return;
   const el=document.getElementById('allFixtures');
   if(!tour.matches.length){el.innerHTML='<div class="empty">No fixtures yet</div>';return;}
   // Trim round names to fix invisible whitespace that breaks grouping
@@ -1208,14 +1098,7 @@ function renderFixtureList(){
   rounds.forEach(r=>{
     h+=`<div style="margin-bottom:1rem"><div style="font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:.4rem;padding:.3rem .5rem;background:var(--card2);border-radius:4px">${r}</div>`;
     tour.matches.filter(m=>m.round===r).forEach(m=>{
-      if(m.voided){
-        h+=`<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--border);opacity:.55">
-          <span style="flex:1;font-size:.85rem;font-weight:600;text-decoration:line-through;color:var(--muted)">${m.homeName} vs ${m.awayName}</span>
-          <span class="void-badge">🚫 VOID</span>
-          <button onclick="unvoidMatch('${m.id}')" style="background:none;border:1px solid rgba(212,175,55,.4);color:var(--gold);padding:.2rem .45rem;border-radius:4px;font-size:.72rem;cursor:pointer;font-weight:700" title="Restore this match">↩️</button>
-          <button class="del-btn" onclick="deleteFixture('${m.id}')">✕</button>
-        </div>`;
-      } else if(m.done){
+      if(m.done){
         h+=`<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--border)">
           <span style="flex:1;font-size:.85rem;font-weight:600">${m.homeName} vs ${m.awayName}</span>
           <button onclick="openEditScore('${m.id}')" style="background:rgba(6,255,165,.1);border:1px solid rgba(6,255,165,.4);color:var(--green);padding:.2rem .5rem;border-radius:4px;font-size:.8rem;cursor:pointer;font-family:'Bebas Neue';letter-spacing:1px" title="Tap to edit score">${m.homeScore} – ${m.awayScore}</button>
@@ -1242,65 +1125,11 @@ function renderFixtureList(){
 // ═══════════════════════════════════════════
 // QUICK SCORE
 // ═══════════════════════════════════════════
-function getTeamCoach(teamName){
-  const tour = getTour();
-  if(!tour) return '';
-  const t = tour.teams.find(x => x.name && x.name.trim().toLowerCase() === (teamName||'').trim().toLowerCase());
-  return t && t.coach ? '🧢 ' + t.coach : '';
-}
-
-function renderResultsEdit(){
-  const tour=getTour();
-  const el=document.getElementById('resultsEditGrid');
-  if(!el)return;
-  if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
-  const done=[...tour.matches.filter(m=>m.done)].reverse();
-  if(!done.length){el.innerHTML='<div class="empty">No completed matches yet</div>';return;}
-  const rounds=[...new Set(done.map(m=>m.round))];
-  let h='';
-  rounds.forEach(r=>{
-    const rm=done.filter(m=>m.round===r);
-    h+=`<div style="margin-bottom:1.2rem">
-      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-        <div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--green);padding:.2rem .8rem;background:rgba(6,255,165,.08);border:1px solid rgba(6,255,165,.25);border-radius:20px;white-space:nowrap">✅ ${r}</div>
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-      </div>`;
-    rm.forEach(m=>{
-      const homeWin=m.homeScore>m.awayScore, awayWin=m.awayScore>m.homeScore;
-      const hCoach=getTeamCoach(m.homeName), aCoach=getTeamCoach(m.awayName);
-      h+=`<div style="background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;margin-bottom:.5rem;overflow:hidden;position:relative">
-        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--green)"></div>
-        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.55rem">📅 ${m.date||'Date TBC'}</div>
-        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${homeWin?'color:var(--green)':''}">${homeWin?'🏆 ':''}${m.homeName}</div>
-            ${hCoach?`<div style="font-size:.68rem;color:var(--gold);margin-top:.1rem">${hCoach}</div>`:''}
-          </div>
-          <div style="flex-shrink:0;text-align:center;min-width:52px">
-            <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold);letter-spacing:3px;line-height:1">${m.homeScore} – ${m.awayScore}</div>
-            <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
-          </div>
-          <div style="flex:1;min-width:0;text-align:right">
-            <div style="font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${awayWin?'color:var(--green)':''}">${m.awayName}${awayWin?' 🏆':''}</div>
-            ${aCoach?`<div style="font-size:.68rem;color:var(--gold);margin-top:.1rem;text-align:right">${aCoach}</div>`:''}
-          </div>
-        </div>
-        <button onclick="openEditScore('${m.id}')" style="width:100%;padding:.4rem;background:rgba(77,159,255,.1);color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.72rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px">✏️ EDIT THIS RESULT</button>
-      </div>`;
-    });
-    h+='</div>';
-  });
-  el.innerHTML=h;
-}
-
 function renderQS(){
-  const tour=getTour();
-  if(tour) normalizeTour(tour);if(!tour)return;
+  const tour=getTour();if(!tour)return;
   // Trim round names to fix any invisible whitespace that could break grouping
   tour.matches.forEach(m=>{if(m.round)m.round=m.round.trim();});
-  const pending=tour.matches.filter(m=>!m.done&&!m.voided);
-  const voided=tour.matches.filter(m=>m.voided);
+  const pending=tour.matches.filter(m=>!m.done);
   const done=[...tour.matches.filter(m=>m.done)].reverse().slice(0,16);
 
   const pEl=document.getElementById('pendingGrid');
@@ -1324,18 +1153,10 @@ function renderQS(){
         <div class="fix-grid">
           ${rMatches.map(m=>`
           <div class="fix-card" onclick="openScore('${m.id}')">
-            <div class="fix-round">📅 ${m.date?m.date:'Date TBC'}</div>
-            <div class="fix-matchup">
-              <div class="fix-team-side">
-                <div class="fix-team-name">🏠 ${m.homeName}</div>
-                <div class="fix-team-coach">${getTeamCoach(m.homeName)}</div>
-              </div>
-              <div class="fix-vs-badge">VS</div>
-              <div class="fix-away-side">
-                <div class="fix-team-name">${m.awayName} ✈️</div>
-                <div class="fix-team-coach">${getTeamCoach(m.awayName)}</div>
-              </div>
-            </div>
+            <div class="fix-round">${m.date?m.date:'Date TBC'}</div>
+            <div class="fix-team">🏠 ${m.homeName}</div>
+            <div class="fix-vs">VS</div>
+            <div class="fix-team">✈️ ${m.awayName}</div>
             <button class="fix-tap">⚡ TAP TO ENTER SCORE</button>
           </div>`).join('')}
         </div>
@@ -1344,49 +1165,10 @@ function renderQS(){
     pEl.innerHTML=pH;
   }
 
-  // ── Voided matches section ──
-  const vCard=document.getElementById('voidedCard');
-  const vEl=document.getElementById('voidedGrid');
-  if(voided.length&&vCard&&vEl){
-    vCard.style.display='block';
-    const vRounds=[...new Set(voided.map(m=>m.round))];
-    let vH='';
-    vRounds.forEach(r=>{
-      const rm=voided.filter(m=>m.round===r);
-      vH+=`<div style="margin-bottom:1.2rem">
-        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
-          <div style="flex:1;height:1px;background:var(--border)"></div>
-          <div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--red);padding:.2rem .8rem;background:rgba(255,51,85,.08);border:1px solid rgba(255,51,85,.25);border-radius:20px;white-space:nowrap">🚫 ${r}</div>
-          <div style="flex:1;height:1px;background:var(--border)"></div>
-        </div>
-        <div class="fix-grid">
-          ${rm.map(m=>`
-          <div class="fix-card voided" style="pointer-events:none">
-            <div class="fix-round" style="color:var(--red)">🚫 VOIDED — NULL RESULT</div>
-            <div class="fix-matchup">
-              <div class="fix-team-side">
-                <div class="fix-team-name" style="text-decoration:line-through;color:var(--muted)">${m.homeName}</div>
-              </div>
-              <div class="fix-vs-badge" style="border-color:var(--red);color:var(--red)">VS</div>
-              <div class="fix-away-side">
-                <div class="fix-team-name" style="text-decoration:line-through;color:var(--muted)">${m.awayName}</div>
-              </div>
-            </div>
-          </div>
-          <div style="pointer-events:auto;text-align:center;margin-top:-.4rem;margin-bottom:.4rem">
-            <button onclick="unvoidMatch('${m.id}')" style="background:none;border:1px solid rgba(212,175,55,.4);color:var(--gold);padding:.25rem .8rem;border-radius:6px;font-size:.72rem;cursor:pointer;font-weight:700">↩️ Restore Match</button>
-          </div>`).join('')}
-        </div>
-      </div>`;
-    });
-    vEl.innerHTML=vH;
-  } else if(vCard){
-    vCard.style.display='none';
-  }
-
   if(!done.length){dEl.innerHTML='<div class="empty">No results yet</div>';}
   else{
     const dRounds=[...new Set(done.map(m=>m.round))];
+    let dH='';
     dRounds.forEach(r=>{
       const rMatches=done.filter(m=>m.round===r);
       dH+=`<div style="margin-bottom:1.2rem">
@@ -1398,21 +1180,11 @@ function renderQS(){
         <div class="fix-grid">
           ${rMatches.map(m=>`
           <div class="fix-card done">
-            <div class="fix-round">📅 ${m.date||'Date TBC'}</div>
-            <div class="fix-matchup">
-              <div class="fix-team-side">
-                <div class="fix-team-name" style="${m.homeScore>m.awayScore?'color:var(--green)':''}">🏠 ${m.homeName}</div>
-                <div class="fix-team-coach">${getTeamCoach(m.homeName)}</div>
-              </div>
-              <div style="flex-shrink:0;text-align:center">
-                <div style="font-family:'Bebas Neue';font-size:1.5rem;color:var(--gold);letter-spacing:3px;line-height:1">${m.homeScore} – ${m.awayScore}</div>
-                <div style="font-size:.58rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
-              </div>
-              <div class="fix-away-side">
-                <div class="fix-team-name" style="${m.awayScore>m.homeScore?'color:var(--green)':''}">${m.awayName} ✈️</div>
-                <div class="fix-team-coach">${getTeamCoach(m.awayName)}</div>
-              </div>
-            </div>
+            <div class="fix-round">${m.date||''}</div>
+            <div class="fix-team" style="${m.homeScore>m.awayScore?'color:var(--green)':''}">🏠 ${m.homeName}</div>
+            <div class="fix-score">${m.homeScore} – ${m.awayScore}</div>
+            <div class="fix-team" style="${m.awayScore>m.homeScore?'color:var(--green)':''}">✈️ ${m.awayName}</div>
+            <div style="text-align:center;font-size:.7rem;color:var(--green);font-weight:700;margin-top:.5rem">✅ FINAL</div>
           </div>`).join('')}
         </div>
       </div>`;
@@ -1425,11 +1197,9 @@ function openScore(mid){
   smFid=mid;smH=0;smA=0;
   const tour=getTour();
   const m=tour.matches.find(x=>x.id===mid);
-  if(!m||m.done||m.voided) return; // block voided matches
+  if(!m||m.done)return;
   document.getElementById('smHome').textContent=m.homeName;
   document.getElementById('smAway').textContent=m.awayName;
-  document.getElementById('smHomeCoach').textContent=getTeamCoach(m.homeName);
-  document.getElementById('smAwayCoach').textContent=getTeamCoach(m.awayName);
   document.getElementById('smRound').textContent=m.round;
   document.getElementById('smHnum').textContent='0';
   document.getElementById('smAnum').textContent='0';
@@ -1477,9 +1247,8 @@ function saveScore(){
   applyStats(h,a,smH,smA);
   m.homeScore=smH;m.awayScore=smA;m.done=true;m.date=m.date||today();
   closeScore();sdb();updateAll();
-  toast(`🥅 ${h.name} ${smH} – ${smA} ${a.name}`);
+  toast(`⚽ ${h.name} ${smH} – ${smA} ${a.name}`);
   checkPlayoffAlert();
-  if(document.getElementById('tc-results')&&document.getElementById('tc-results').classList.contains('active'))renderResultsEdit();
 }
 
 // ═══════════════════════════════════════════
@@ -1533,8 +1302,7 @@ function getSortedTeams(teams){
 }
 
 function renderTable(){
-  const tour=getTour();
-  if(tour) normalizeTour(tour);if(!tour)return;
+  const tour=getTour();if(!tour)return;
   const el=document.getElementById('tableView');
   if(!tour.teams.length){el.innerHTML='<div class="empty">No teams registered</div>';return;}
 
@@ -1636,8 +1404,7 @@ function checkPlayoffAlert(){
 }
 
 function checkPlayoffAlertFull(){
-  const tour=getTour();
-  if(tour) normalizeTour(tour);if(!tour)return;
+  const tour=getTour();if(!tour)return;
   const pending=tour.matches.filter(m=>!m.done);
   const alerts=findBoundaryTies(tour);
   const box=document.getElementById('playoffAlertFull');
@@ -1835,8 +1602,7 @@ function deleteTrophyImage(){
 function renderPlayoffs(){renderBracket();}
 
 function renderBracket(){
-  const tour=getTour();
-  if(tour) normalizeTour(tour);if(!tour)return;
+  const tour=getTour();if(!tour)return;
   updateWinnerTickerBtn(tour);
   if(!tour.bracketRounds||!tour.bracketRounds.length){
     document.getElementById('bracketDisplay').style.display='none';
@@ -1974,7 +1740,7 @@ function renderBracket(){
   // FINAL center
   bHtml+=`<div style="flex:${centerFlex};display:flex;flex-direction:column;align-items:center;min-width:0;padding:0 2px">
     <img src="jalala_cup.png" style="width:100%;height:auto;max-height:45vw;object-fit:contain;filter:drop-shadow(0 0 20px rgba(212,175,55,0.9));display:block;margin:0 auto">
-    <div style="font-family:'Bebas Neue';font-size:clamp(.6rem,.9rem,1rem);letter-spacing:2px;color:var(--gold);text-align:center;margin:.2rem 0 .4rem;text-shadow:0 0 8px rgba(212,175,55,.6)">🏆 FINAL 🏆</div>
+    <div style="font-family:'Bebas Neue';font-size:clamp(.6rem,.9rem,1rem);letter-spacing:2px;color:var(--gold);text-align:center;margin:.2rem 0 .4rem;text-shadow:0 0 8px rgba(212,175,55,.6)">⚽ FINAL ⚽</div>
     <div style="width:100%">${bCompactCard(finalRound.matches[0])}</div>
     ${finalRound.matches[0].winner?`<div style="font-family:'Bebas Neue';font-size:clamp(.6rem,.8rem,1rem);color:var(--gold);text-align:center;margin-top:.3rem">🏆 ${finalRound.matches[0].winner.name}</div>`:''}
   </div>`;
@@ -2186,11 +1952,11 @@ function resetBracket(){
 function updateStats(){
   const tour=getTour();if(!tour)return;
   const done=tour.matches.filter(m=>m.done);
-  const voided=tour.matches.filter(m=>m.voided);
+  const goals=done.reduce((s,m)=>s+m.homeScore+m.awayScore,0);
   document.getElementById('st-teams').textContent=tour.teams.length;
   document.getElementById('st-played').textContent=done.length;
-  document.getElementById('st-pending').textContent=tour.matches.filter(m=>!m.done&&!m.voided).length;
-  document.getElementById('st-voided').textContent=voided.length;
+  document.getElementById('st-pending').textContent=tour.matches.filter(m=>!m.done).length;
+  document.getElementById('st-goals').textContent=goals;
 }
 
 // ═══════════════════════════════════════════
@@ -2240,16 +2006,16 @@ function changePw(){
   const cur=document.getElementById('curPw').value;
   const nw=document.getElementById('newPw').value;
   const cf=document.getElementById('confPw').value;
-  const admin=JSON.parse(localStorage.getItem('pfl_admin')||'{"pw":"admin123","changed":false}');
+  const admin=JSON.parse(localStorage.getItem('jalala_admin')||'{"pw":"admin123","changed":false}');
   if(cur!==admin.pw){toast('Wrong current password',true);return;}
   if(nw.length<6){toast('Min 6 characters',true);return;}
   if(nw!==cf){toast('Passwords do not match',true);return;}
   admin.pw=nw;admin.changed=true;
-  localStorage.setItem('pfl_admin',JSON.stringify(admin));
+  localStorage.setItem('jalala_admin',JSON.stringify(admin));
   // Rotate session token after password change
   const newToken=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
-  localStorage.setItem('pfl_token',newToken);
-  sessionStorage.setItem('pfl_admin',JSON.stringify({ok:true,token:newToken,t:Date.now()}));
+  localStorage.setItem('jalala_token',newToken);
+  sessionStorage.setItem('jalala_admin',JSON.stringify({ok:true,token:newToken,t:Date.now()}));
   document.getElementById('warnBadge').style.display='none';
   ['curPw','newPw','confPw'].forEach(id=>document.getElementById(id).value='');
   toast('✅ Password changed & session secured!');
@@ -2274,36 +2040,6 @@ function deleteTournament(){
 function updateAll(){
   updateStats();renderQS();renderFixtureList();
   if(document.getElementById('tc-results')&&document.getElementById('tc-results').classList.contains('active'))renderResultsEdit();
-}
-
-// ═══════════════════════════════════════════
-// VOID OUTSTANDING MATCHES
-// ═══════════════════════════════════════════
-function voidOutstandingMatches(){
-  const tour=getTour();if(!tour)return;
-  normalizeTour(tour);
-  const roundFilter=document.getElementById('voidRoundInput').value.trim().toLowerCase();
-  let targets=tour.matches.filter(m=>!m.done&&!m.voided);
-  if(roundFilter) targets=targets.filter(m=>m.round&&m.round.trim().toLowerCase()===roundFilter);
-  if(!targets.length){
-    toast(roundFilter?`No unplayed matches found in "${document.getElementById('voidRoundInput').value.trim()}" — check the round name`:'No pending matches to void',true);
-    return;
-  }
-  const roundLabel=roundFilter?`"${document.getElementById('voidRoundInput').value.trim()}"`:'all pending rounds';
-  if(!confirm(`Void ${targets.length} unplayed match${targets.length>1?'es':''}in ${roundLabel}?\n\n✅ Teams that already played keep their results.\n🚫 These matches will be marked NULL — no points given to anyone.\n\nThis cannot be undone automatically (use Unvoid on individual matches to restore).`))return;
-  targets.forEach(m=>{m.voided=true;m.voidedAt=Date.now();});
-  document.getElementById('voidRoundInput').value='';
-  sdb();updateAll();
-  toast(`🚫 ${targets.length} match${targets.length>1?'es':''} voided — no points awarded`);
-}
-
-function unvoidMatch(mid){
-  const tour=getTour();if(!tour)return;
-  const m=tour.matches.find(x=>x.id===mid);if(!m||!m.voided)return;
-  if(!confirm(`Restore "${m.homeName} vs ${m.awayName}" as a playable fixture?\n\nThe match will go back to pending — no score entered.`))return;
-  m.voided=false;m.voidedAt=null;
-  sdb();updateAll();
-  toast(`Match restored to pending`);
 }
 function toggleDashPw(id,btn){
   const input=document.getElementById(id);
@@ -2393,167 +2129,359 @@ function mergeTeams(){
 }
 
 // ═══════════════════════════════════════════
-// TEAMS REGISTRY
+// normalizeTour — crash prevention (NEW — PFL v31)
 // ═══════════════════════════════════════════
-let registryTeams = []; // loaded from Firebase + localStorage cache
-let editingRegId = null; // null = new, otherwise = editing existing
+function normalizeTour(t){
+  if(!t) return t;
+  if(!Array.isArray(t.teams))   t.teams=[];
+  if(!Array.isArray(t.matches)) t.matches=[];
+  if(!Array.isArray(t.groups))  t.groups=[];
+  if(!Array.isArray(t.playoffs))t.playoffs=[];
+  return t;
+}
+
+// ═══════════════════════════════════════════
+// TEAMS REGISTRY (NEW — PFL v31)
+// ═══════════════════════════════════════════
+let registryTeams = [];
+let editingRegId  = null;
 
 function loadRegistry(){
-  const raw = localStorage.getItem('pfl_registry');
-  if(raw){ try{ registryTeams = JSON.parse(raw); }catch(e){ registryTeams=[]; } }
+  const raw=localStorage.getItem('jalala_registry');
+  if(raw){ try{ registryTeams=JSON.parse(raw); }catch(e){ registryTeams=[]; } }
 }
 function saveRegistry(){
-  localStorage.setItem('pfl_registry', JSON.stringify(registryTeams));
+  localStorage.setItem('jalala_registry',JSON.stringify(registryTeams));
 }
 
 function toggleRegistryForm(){
-  editingRegId = null;
-  document.getElementById('regFormTitle').textContent = '➕ New Team';
-  document.getElementById('regName').value = '';
-  document.getElementById('regCoach').value = '';
-  const wrap = document.getElementById('regFormWrap');
-  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  editingRegId=null;
+  document.getElementById('regFormTitle').textContent='➕ New Team';
+  document.getElementById('regName').value='';
+  document.getElementById('regCoach').value='';
+  const wrap=document.getElementById('regFormWrap');
+  wrap.style.display=wrap.style.display==='none'?'block':'none';
 }
 
 function cancelRegistryForm(){
-  editingRegId = null;
-  document.getElementById('regFormWrap').style.display = 'none';
+  editingRegId=null;
+  document.getElementById('regFormWrap').style.display='none';
 }
 
 function editRegistryTeam(tid){
-  const t = registryTeams.find(x => x.id === tid);
+  const t=registryTeams.find(x=>x.id===tid);
   if(!t) return;
-  editingRegId = tid;
-  document.getElementById('regFormTitle').textContent = '✏️ Edit Team';
-  document.getElementById('regName').value = t.name || '';
-  document.getElementById('regCoach').value = t.coach || '';
-  document.getElementById('regFormWrap').style.display = 'block';
-  document.getElementById('regFormWrap').scrollIntoView({behavior:'smooth', block:'nearest'});
+  editingRegId=tid;
+  document.getElementById('regFormTitle').textContent='✏️ Edit Team';
+  document.getElementById('regName').value=t.name||'';
+  document.getElementById('regCoach').value=t.coach||'';
+  document.getElementById('regFormWrap').style.display='block';
+  document.getElementById('regFormWrap').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function saveRegistryTeam(){
-  const name = document.getElementById('regName').value.trim();
-  const coach = document.getElementById('regCoach').value.trim();
-  const badge = '⚽'; // badge field removed, default to soccer ball
-  if(!name){ toast('Team name is required', true); return; }
+  const name=document.getElementById('regName').value.trim();
+  const coach=document.getElementById('regCoach').value.trim();
+  if(!name){toast('Enter team name',true);return;}
 
   if(editingRegId){
-    // Edit existing registry team
-    const t = registryTeams.find(x => x.id === editingRegId);
-    if(t){
-      const oldName = t.name;
-      t.name = name; t.coach = coach; t.badge = badge;
-      // Propagate name/coach change into all tournaments
-      let tourChanged = false;
-      db.tournaments.forEach(tour => {
-        normalizeTour(tour);
-        tour.teams.forEach(tm => {
-          if(tm.name.toLowerCase() === oldName.toLowerCase()){
-            tm.name = name;
-            tm.coach = coach;
-            tourChanged = true;
-          }
-        });
+    // Update existing
+    const t=registryTeams.find(x=>x.id===editingRegId);
+    if(!t){toast('Team not found',true);return;}
+    t.name=name; t.coach=coach;
+    // Cascade name update to all tournaments
+    db.tournaments.forEach(tour=>{
+      normalizeTour(tour);
+      const tt=tour.teams.find(x=>x.id===t.id||x.name.toLowerCase()===t.name.toLowerCase());
+      if(tt){ tt.name=name; tt.coach=coach; }
+      tour.matches.forEach(m=>{
+        if(m.homeName&&m.homeName.toLowerCase()===t.name.toLowerCase()) m.homeName=name;
+        if(m.awayName&&m.awayName.toLowerCase()===t.name.toLowerCase()) m.awayName=name;
       });
-      if(tourChanged){
-        sdb();
-        // Re-sync each affected tournament to Firebase
-        db.tournaments.forEach(tour => {
-          if(window._fbSaveTour) window._fbSaveTour(tour.id, tour).catch(err => console.error('Tour sync failed:', err));
-        });
-      }
-    }
+    });
   } else {
-    // Check duplicate name
-    if(registryTeams.some(t => t.name.toLowerCase() === name.toLowerCase())){
-      toast('A team with that name already exists', true); return;
+    if(registryTeams.some(t=>t.name.toLowerCase()===name.toLowerCase())){
+      toast(`${name} is already in the registry`,true); return;
     }
-    const newTeam = {
-      id: 'reg_' + Date.now(),
-      name, coach, badge,
-      dateCreated: new Date().toISOString().slice(0,10)
-    };
+    const newTeam={id:'reg_'+Date.now(),name,coach,badge:'⚽',dateCreated:new Date().toISOString().slice(0,10)};
     registryTeams.push(newTeam);
   }
 
   saveRegistry();
-  // Sync to Firebase
+  // Firebase sync
   if(window._fbSaveRegTeam){
-    const tid = editingRegId || registryTeams[registryTeams.length-1].id;
-    const t = registryTeams.find(x => x.id === tid);
-    if(t) window._fbSaveRegTeam(t.id, t).then(()=>{
-      setSyncStatus('idle');
-    }).catch((err)=>{
-      console.error('Registry Firebase save failed:', err);
-      toast('⚠️ Saved locally but Firebase sync failed — try again', true);
-    });
+    const tid=editingRegId||registryTeams[registryTeams.length-1].id;
+    const t=registryTeams.find(x=>x.id===tid);
+    if(t) window._fbSaveRegTeam(t.id,t).catch(err=>console.error('Registry sync failed:',err));
   }
   cancelRegistryForm();
   renderRegistry();
-  toast(editingRegId ? '✅ Team updated!' : '✅ Team added to registry!');
-  editingRegId = null;
+  toast(editingRegId?'✅ Team updated!':'✅ Team added to registry!');
+  editingRegId=null;
 }
 
 function deleteRegistryTeam(tid){
-  const t = registryTeams.find(x => x.id === tid);
-  if(!t) return;
-  if(!confirm(`Delete "${t.name}" from the registry?\n\nThis only removes them from the registry — it won't affect existing tournament data.`)) return;
-  registryTeams = registryTeams.filter(x => x.id !== tid);
+  const t=registryTeams.find(x=>x.id===tid);
+  if(!t)return;
+  if(!confirm(`Delete "${t.name}" from the registry?\n\nThis only removes them from the registry — it won't affect existing tournament data.`))return;
+  registryTeams=registryTeams.filter(x=>x.id!==tid);
   saveRegistry();
-  if(window._fbDeleteRegTeam) window._fbDeleteRegTeam(tid).catch((err)=>{ console.error('Registry delete failed:', err); });
+  if(window._fbDeleteRegTeam) window._fbDeleteRegTeam(tid).catch(err=>console.error('Registry delete failed:',err));
   renderRegistry();
-  toast(`🗑 ${t.name} removed from registry`);
+  toast('Team removed from registry');
 }
 
 function renderRegistry(){
-  const el = document.getElementById('regList');
+  const el=document.getElementById('regList');
+  if(!el)return;
   if(!registryTeams.length){
-    el.innerHTML = '<div class="empty" style="padding:1.5rem">No teams in registry yet</div>';
+    el.innerHTML='<div class="empty" style="padding:1.5rem">No teams in registry yet</div>';
     return;
   }
-  const sorted = registryTeams.slice().sort((a,b) => a.name.localeCompare(b.name));
-  el.innerHTML = sorted.map(t => `
+  const sorted=registryTeams.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  el.innerHTML=sorted.map(t=>`
     <div class="t-card" style="cursor:default">
       <div style="display:flex;align-items:center;gap:.8rem;flex:1;min-width:0">
         <div style="font-size:1.6rem;flex-shrink:0">${t.badge||'⚽'}</div>
         <div style="min-width:0">
           <div class="t-card-name">${t.name}</div>
-          <div class="t-card-meta">${t.coach ? '🧢 '+t.coach : 'No coach'} · Added ${t.dateCreated||'—'}</div>
+          <div class="t-card-meta">${t.coach?'🧢 '+t.coach:'No coach'} · Added ${t.dateCreated||'—'}</div>
         </div>
       </div>
       <div style="display:flex;gap:.5rem;flex-shrink:0">
         <button class="del-btn" style="border-color:var(--gold);color:var(--gold)" onclick="editRegistryTeam('${t.id}')">✏️</button>
         <button class="del-btn" onclick="deleteRegistryTeam('${t.id}')">🗑</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
+// Populate registry dropdown in the Add Team form (NEW)
+function buildRegistryDropdown(){
+  const sel=document.getElementById('addTeamSelect');
+  if(!sel)return;
+  const tour=getTour();
+  const existing=tour?(tour.teams||[]).map(t=>t.name.toLowerCase()):[];
+  const available=registryTeams.filter(t=>!existing.includes(t.name.toLowerCase()));
+  sel.innerHTML='<option value="">-- Select a registered team --</option>'+
+    available.map(t=>`<option value="${t.id}">${t.name}${t.coach?' ('+t.coach+')':''}</option>`).join('');
+}
+
+// Helper for renderResultsEdit — get coach from registry or team obj
+function getTeamCoach(teamName){
+  if(!teamName)return'';
+  const reg=registryTeams.find(r=>r.name&&r.name.toLowerCase()===teamName.toLowerCase());
+  if(reg&&reg.coach)return'🧢 '+reg.coach;
+  const tour=getTour();
+  if(tour){const t=(tour.teams||[]).find(x=>x.name===teamName);if(t&&t.coach)return'🧢 '+t.coach;}
+  return'';
+}
+
+// ═══════════════════════════════════════════
+// RESULTS TAB — Editable grid (NEW — PFL v31)
+// ═══════════════════════════════════════════
+function renderResultsEdit(){
+  const tour=getTour();
+  const el=document.getElementById('resultsEditGrid');
+  if(!el)return;
+  if(!tour){el.innerHTML='<div class="empty">No data</div>';return;}
+  normalizeTour(tour);
+  const done=[...tour.matches.filter(m=>m.done)].reverse();
+  if(!done.length){el.innerHTML='<div class="empty">No completed matches yet</div>';return;}
+  const rounds=[...new Set(done.map(m=>m.round))];
+  let h='';
+  rounds.forEach(r=>{
+    const rm=done.filter(m=>m.round===r);
+    h+=`<div style="margin-bottom:1.2rem">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--green);padding:.2rem .8rem;background:rgba(6,255,165,.08);border:1px solid rgba(6,255,165,.25);border-radius:20px;white-space:nowrap">✅ ${r}</div>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>`;
+    rm.forEach(m=>{
+      const homeWin=m.homeScore>m.awayScore, awayWin=m.awayScore>m.homeScore;
+      const hCoach=getTeamCoach(m.homeName), aCoach=getTeamCoach(m.awayName);
+      h+=`<div style="background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;margin-bottom:.5rem;overflow:hidden;position:relative">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--green)"></div>
+        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:.55rem">📅 ${m.date||'Date TBC'}</div>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${homeWin?'color:var(--green)':''}">${homeWin?'🏆 ':''}${m.homeName}</div>
+            ${hCoach?`<div style="font-size:.68rem;color:var(--gold);margin-top:.1rem">${hCoach}</div>`:''}
+          </div>
+          <div style="flex-shrink:0;text-align:center;min-width:52px">
+            <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold);letter-spacing:3px;line-height:1">${m.homeScore} – ${m.awayScore}</div>
+            <div style="font-size:.55rem;color:var(--green);font-weight:800;letter-spacing:1px">✅ FINAL</div>
+          </div>
+          <div style="flex:1;min-width:0;text-align:right">
+            <div style="font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${awayWin?'color:var(--green)':''}">
+              ${m.awayName}${awayWin?' 🏆':''}
+            </div>
+            ${aCoach?`<div style="font-size:.68rem;color:var(--gold);margin-top:.1rem;text-align:right">${aCoach}</div>`:''}
+          </div>
+        </div>
+        <button onclick="openEditScore('${m.id}')" style="width:100%;padding:.4rem;background:rgba(77,159,255,.1);color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;font-family:'Barlow';font-weight:800;font-size:.72rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px">✏️ EDIT THIS RESULT</button>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// MARK AS FINISHED (NEW — PFL v31)
+// ═══════════════════════════════════════════
+function markTournamentFinished(){
+  const tour=getTour();if(!tour)return;
+  if(tour.status==='finished'){
+    if(!confirm('This tournament is already marked as finished.\nRestore it to active?'))return;
+    tour.status='active';
+    sdb();toast('Tournament restored to active');
+    document.getElementById('markFinishedWrap').querySelector('button').textContent='🏁 MARK AS FINISHED';
+    return;
+  }
+  const pending=(tour.matches||[]).filter(m=>!m.done).length;
+  const msg=pending>0
+    ?`Mark "${tour.name}" as FINISHED?\n\n⚠️ There are still ${pending} unplayed match${pending>1?'es':''}.\n\nIt will move to Past Seasons on the public page.`
+    :`Mark "${tour.name}" as FINISHED?\n\nIt will move to Past Seasons on the public page.`;
+  if(!confirm(msg))return;
+  tour.status='finished';
+  sdb();
+  toast('🏁 Tournament marked as finished!');
+  const btn=document.getElementById('markFinishedWrap').querySelector('button');
+  if(btn){ btn.textContent='↩️ RESTORE TO ACTIVE'; btn.style.background='rgba(6,255,165,.1)'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)'; }
+}
+
+// ═══════════════════════════════════════════
+// UPDATED showTab — adds Results + registry dropdown
+// ═══════════════════════════════════════════
+function showTab(name){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  const tc=document.getElementById('tc-'+name);
+  const tb=document.getElementById('tab-'+name);
+  if(tc) tc.classList.add('active');
+  if(tb) tb.classList.add('active');
+  if(name==='table')renderTable();
+  if(name==='teams'){renderTeams();buildRegistryDropdown();}
+  if(name==='results')renderResultsEdit();
+  if(name==='playoffs'){renderPlayoffs();checkPlayoffAlertFull();}
+  if(name==='rules')loadRulesEditor();
+  if(name==='settings'){
+    const tour=getTour();
+    const btn=document.querySelector('#markFinishedWrap button');
+    if(btn&&tour){
+      if(tour.status==='finished'){
+        btn.textContent='↩️ RESTORE TO ACTIVE';
+        btn.style.background='rgba(6,255,165,.1)';
+        btn.style.borderColor='var(--green)';
+        btn.style.color='var(--green)';
+      } else {
+        btn.textContent='🏁 MARK AS FINISHED';
+        btn.style.background='rgba(212,175,55,.15)';
+        btn.style.borderColor='var(--gold)';
+        btn.style.color='var(--gold)';
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// UPDATED addTeam — registry-aware (NEW — PFL v31)
+// ═══════════════════════════════════════════
+// Override the existing addTeam
+function addTeam(){
+  const tour=getTour();if(!tour)return;
+  normalizeTour(tour);
+  const sel=document.getElementById('addTeamSelect');
+  const selVal=sel?sel.value:'';
+  const g=tour.format==='groups'?document.getElementById('addGroup').value:'';
+
+  if(selVal){
+    // Picked from registry
+    const regTeam=registryTeams.find(x=>x.id===selVal);
+    if(!regTeam){toast('Team not found in registry',true);return;}
+    if(tour.teams.some(t=>t.name.toLowerCase()===regTeam.name.toLowerCase())){
+      toast(`${regTeam.name} is already in this tournament`,true);return;
+    }
+    tour.teams.push({id:'team_'+Date.now(),name:regTeam.name,coach:regTeam.coach||'',group:g,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
+    if(sel) sel.value='';
+    sdb();buildTeamSelects();renderTeams();buildRegistryDropdown();toast(`${regTeam.name} added!`);
+    return;
+  }
+
+  // New team typed manually — save to tournament AND registry
+  const n=document.getElementById('addTeamName').value.trim();
+  const c=document.getElementById('addCoach').value.trim();
+  if(!n){toast('Select a team or enter a new team name',true);return;}
+  if(tour.teams.some(t=>t.name.toLowerCase()===n.toLowerCase())){
+    toast(`${n} is already in this tournament`,true);return;
+  }
+  const g2=tour.format==='groups'?document.getElementById('addGroup').value:'';
+  tour.teams.push({id:'team_'+Date.now(),name:n,coach:c,group:g2,played:0,won:0,drawn:0,lost:0,goalsFor:0,goalsAgainst:0,points:0});
+  document.getElementById('addTeamName').value='';
+  document.getElementById('addCoach').value='';
+  // Auto-add to registry if not already there
+  if(!registryTeams.some(t=>t.name.toLowerCase()===n.toLowerCase())){
+    const newReg={id:'reg_'+Date.now(),name:n,coach:c,badge:'⚽',dateCreated:new Date().toISOString().slice(0,10)};
+    registryTeams.push(newReg);
+    saveRegistry();
+    if(window._fbSaveRegTeam) window._fbSaveRegTeam(newReg.id,newReg).catch(err=>console.error('Registry sync failed:',err));
+  }
+  sdb();buildTeamSelects();renderTeams();buildRegistryDropdown();toast(`${n} added to tournament & registry!`);
+}
+
+// ═══════════════════════════════════════════
+// UPDATED renderList — shows FINISHED badge (NEW)
+// ═══════════════════════════════════════════
+function renderList(){
+  const el=document.getElementById('tList');
+  if(!db.tournaments.length){el.innerHTML='<div class="t-empty"><div class="t-empty-icon">🏆</div><p>No tournaments yet.<br>Create one below!</p></div>';return;}
+  el.innerHTML=db.tournaments.map(t=>`
+    <div class="t-card" onclick="openTour('${t.id}')">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div class="t-card-name">${t.name}</div>
+          ${t.status==='finished'?'<span style="font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:.1rem .4rem;border-radius:3px;background:rgba(212,175,55,.15);color:var(--gold);flex-shrink:0">🏁 FINISHED</span>':''}
+        </div>
+        <div class="t-card-meta">${t.season||''} · ${t.format==='league'?'League':'Groups'} · ${(t.teams||[]).length} teams · ${(t.matches||[]).filter(m=>m.done).length} results</div>
+      </div>
+      <span class="t-card-badge">${t.format==='league'?'📋':'🏟️'}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// FIREBASE REGISTRY HOOKS (module-level, NEW)
+// ═══════════════════════════════════════════
+// These are set by the Firebase module script below
+// They're called here after the module fires
+
 function initRegistrySync(){
-  if(!window._fbLoadRegistry || !window._authReady){ setTimeout(initRegistrySync, 300); return; }
-  window._fbLoadRegistry().then(data => {
-    if(!data) return;
-    const cloudTeams = Object.values(data);
-    let changed = false;
-    cloudTeams.forEach(ct => {
-      const idx = registryTeams.findIndex(x => x.id === ct.id);
-      if(idx === -1){ registryTeams.push(ct); changed = true; }
-      else { registryTeams[idx] = ct; changed = true; }
+  if(!window._fbLoadRegistry||!window._authReady){ setTimeout(initRegistrySync,300); return; }
+  window._fbLoadRegistry().then(data=>{
+    if(!data)return;
+    const cloudTeams=Object.values(data);
+    let changed=false;
+    cloudTeams.forEach(ct=>{
+      const idx=registryTeams.findIndex(x=>x.id===ct.id);
+      if(idx===-1){ registryTeams.push(ct); changed=true; }
+      else { registryTeams[idx]=ct; changed=true; }
     });
     if(changed){ saveRegistry(); renderRegistry(); buildRegistryDropdown(); }
   }).catch(()=>{});
 }
 
-// ── INIT ──
+// ── UPDATED INIT — also loads registry ──────────────────────────
+// Override old init sequence at bottom of original script
 checkSession();
 gdb();
 loadRegistry();
 renderList();
 renderRegistry();
+initRegistrySync();
 
 // Then pull from Firebase and merge (in case admin switched device)
 function initFirebaseSync(){
-  if(!window._fbLoadAll || !window._authReady){
+  if(!window._fbLoadAll){
     setTimeout(initFirebaseSync, 300);
     return;
   }
@@ -2565,7 +2493,7 @@ function initFirebaseSync(){
       const idx = db.tournaments.findIndex(t => t.id === cloudTour.id);
       if(idx === -1){
         // New tournament from cloud — add it locally
-        db.tournaments.push(normalizeTour(cloudTour));
+        db.tournaments.push(cloudTour);
         changed = true;
       } else {
         const localTour = db.tournaments[idx];
@@ -2573,13 +2501,13 @@ function initFirebaseSync(){
         const localTime = localTour.updatedAt || 0;
         // Only overwrite local if cloud is newer — prevents losing unsaved local work
         if(cloudTime > localTime){
-          db.tournaments[idx] = normalizeTour(cloudTour);
+          db.tournaments[idx] = cloudTour;
           changed = true;
         }
       }
     });
     if(changed){
-      localStorage.setItem('pfl_db', JSON.stringify(db));
+      localStorage.setItem('jalala_db', JSON.stringify(db));
       renderList();
       if(activeTid) updateAll();
     }
@@ -2587,7 +2515,6 @@ function initFirebaseSync(){
   }).catch(()=>setSyncStatus('error'));
 }
 initFirebaseSync();
-initRegistrySync();
 </script>
 </body>
 </html>
