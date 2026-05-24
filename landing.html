@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PFL Zone — Prime eFootball League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#d4af37;--gold2:#f0cf6a;--gold3:#fff0a0;
+  --dark:#07070f;--card:#0f0f1e;--card2:#13132a;
+  --green:#06ffa5;--red:#ff3355;--blue:#4d9fff;
+  --border:rgba(212,175,55,.15);
+}
+
+html,body{height:100%;overflow-x:hidden}
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--dark);
+  color:#f0f0f0;
+  min-height:100vh;
+}
+
+/* ── NOISE GRAIN OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:.4;
+}
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbFloat 12s ease-in-out infinite}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(212,175,55,.12),transparent 70%);top:-100px;left:-100px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(6,255,165,.07),transparent 70%);bottom:-50px;right:-50px;animation-delay:-4s}
+.orb3{width:300px;height:300px;background:radial-gradient(circle,rgba(77,159,255,.08),transparent 70%);top:40%;left:50%;transform:translate(-50%,-50%);animation-delay:-8s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,30px) scale(.95)}}
+
+/* ── PITCH GRID LINES (background detail) ── */
+.pitch-lines{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(212,175,55,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(212,175,55,.025) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+
+/* ── MAIN WRAPPER ── */
+.wrap{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:0 1.2rem 4rem;
+}
+
+/* ── HEADER BAND ── */
+.hdr{
+  width:100%;max-width:680px;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 0 .8rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:3.5rem;
+}
+.hdr-badge{
+  font-family:'Barlow Condensed';font-size:.7rem;font-weight:700;
+  letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;
+}
+.hdr-status{
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.68rem;font-weight:700;letter-spacing:1.5px;
+  color:var(--green);text-transform:uppercase;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── HERO ── */
+.hero{
+  width:100%;max-width:680px;
+  text-align:center;
+  padding:1rem 0 3rem;
+  position:relative;
+}
+
+/* Trophy icon */
+.trophy-wrap{
+  width:90px;height:90px;margin:0 auto 1.5rem;
+  position:relative;
+}
+.trophy-ring{
+  position:absolute;inset:-8px;border-radius:50%;
+  border:1.5px solid rgba(212,175,55,.3);
+  animation:ringPulse 2.5s ease-in-out infinite;
+}
+.trophy-ring2{
+  position:absolute;inset:-18px;border-radius:50%;
+  border:1px solid rgba(212,175,55,.12);
+  animation:ringPulse 2.5s ease-in-out infinite;animation-delay:.5s;
+}
+@keyframes ringPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.05)}}
+.trophy-icon{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(145deg,#1a1a30,#0d0d1f);
+  border:2px solid rgba(212,175,55,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.6rem;
+  box-shadow:0 0 40px rgba(212,175,55,.2),0 0 80px rgba(212,175,55,.08),inset 0 1px 0 rgba(255,255,255,.05);
+  animation:trophyGlow 3s ease-in-out infinite alternate;
+  position:relative;z-index:1;
+}
+@keyframes trophyGlow{0%{box-shadow:0 0 30px rgba(212,175,55,.2),inset 0 1px 0 rgba(255,255,255,.05)}100%{box-shadow:0 0 60px rgba(212,175,55,.4),0 0 100px rgba(212,175,55,.1),inset 0 1px 0 rgba(255,255,255,.05)}}
+
+/* Season tag */
+.season-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:'Barlow Condensed';font-size:.72rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  color:rgba(212,175,55,.7);
+  background:rgba(212,175,55,.06);
+  border:1px solid rgba(212,175,55,.2);
+  padding:.3rem .8rem;border-radius:20px;
+  margin-bottom:1.2rem;
+}
+.season-tag::before{content:'★';font-size:.6rem}
+.season-tag::after{content:'★';font-size:.6rem}
+
+/* Main title */
+.hero-title{
+  font-family:'Bebas Neue';
+  font-size:clamp(3.5rem,14vw,6.5rem);
+  letter-spacing:6px;
+  line-height:.9;
+  margin-bottom:.5rem;
+  position:relative;
+}
+.hero-title .line1{
+  display:block;
+  background:linear-gradient(180deg,#ffffff 0%,#c8b87a 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-title .line2{
+  display:block;
+  background:linear-gradient(180deg,var(--gold2) 0%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-size:1.25em;
+}
+.hero-sub{
+  font-family:'Barlow Condensed';font-size:1rem;font-weight:700;
+  letter-spacing:5px;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-top:.6rem;margin-bottom:.3rem;
+}
+/* Animated underline */
+.hero-divider{
+  width:60px;height:2px;margin:.9rem auto 1.4rem;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  animation:dividerPulse 2s ease-in-out infinite;
+}
+@keyframes dividerPulse{0%,100%{width:60px;opacity:.7}50%{width:100px;opacity:1}}
+
+.hero-desc{
+  font-size:.95rem;color:rgba(255,255,255,.45);
+  line-height:1.7;max-width:420px;margin:0 auto 2.2rem;
+  font-weight:400;
+}
+
+/* ── STAT PILLS ── */
+.stat-row{
+  display:flex;justify-content:center;gap:.7rem;flex-wrap:wrap;
+  margin-bottom:2.5rem;
+}
+.stat-pill{
+  display:flex;flex-direction:column;align-items:center;
+  padding:.6rem 1.1rem;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;
+  min-width:70px;
+  animation:fadeUp .6s ease both;
+}
+.stat-pill:nth-child(1){animation-delay:.1s}
+.stat-pill:nth-child(2){animation-delay:.2s}
+.stat-pill:nth-child(3){animation-delay:.3s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.sp-val{
+  font-family:'Bebas Neue';font-size:1.6rem;
+  color:var(--gold);letter-spacing:1px;line-height:1;
+}
+.sp-lbl{
+  font-size:.58rem;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:.2rem;
+}
+
+/* ── CTA BUTTONS ── */
+.cta-group{
+  display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;
+  margin-bottom:2.8rem;
+}
+.btn-main{
+  display:inline-flex;align-items:center;gap:.6rem;
+  background:linear-gradient(135deg,var(--gold) 0%,#b8922e 100%);
+  color:#000;
+  padding:.9rem 2rem;border-radius:8px;
+  font-family:'Barlow Condensed';font-size:1rem;font-weight:800;
+  letter-spacing:2px;text-transform:uppercase;
+  text-decoration:none;
+  box-shadow:0 4px 30px rgba(212,175,55,.3);
+  transition:all .25s cubic-bezier(.175,.885,.32,1.275);
+  border:none;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.btn-main::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);
+  opacity:0;transition:opacity .25s;
+}
+.btn-main:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(212,175,55,.5)}
+.btn-main:hover::before{opacity:1}
+.btn-main:active{transform:translateY(0)}
+.btn-main .arr{transition:transform .25s}
+.btn-main:hover .arr{transform:translateX(4px)}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:.6rem;
+  background:transparent;
+  color:rgba(255,255,255,.6);
+  padding:.9rem 1.6rem;border-radius:8px;
+  font-family:'Barlow Condensed';font-size:1rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  text-decoration:none;
+  border:1.5px solid rgba(255,255,255,.1);
+  transition:all .25s;
+}
+.btn-ghost:hover{border-color:rgba(212,175,55,.4);color:var(--gold2);background:rgba(212,175,55,.05)}
+
+/* ── FEATURE CARDS ── */
+.features{
+  width:100%;max-width:680px;
+  display:grid;grid-template-columns:1fr 1fr;gap:.8rem;
+  margin-bottom:2.5rem;
+}
+.feat{
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:1.2rem 1rem;
+  display:flex;align-items:flex-start;gap:.8rem;
+  transition:all .3s;
+  animation:fadeUp .6s ease both;
+  cursor:default;
+  position:relative;overflow:hidden;
+}
+.feat:nth-child(1){animation-delay:.15s}
+.feat:nth-child(2){animation-delay:.25s}
+.feat:nth-child(3){animation-delay:.35s}
+.feat:nth-child(4){animation-delay:.45s}
+.feat::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--feat-color,var(--gold)),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.feat:hover{
+  border-color:var(--feat-color,var(--gold));
+  transform:translateY(-3px);
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+}
+.feat:hover::after{opacity:.04}
+.feat-icon{
+  font-size:1.5rem;flex-shrink:0;
+  width:40px;height:40px;
+  border-radius:8px;
+  background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.06);
+  transition:background .3s,border-color .3s;
+}
+.feat:hover .feat-icon{
+  background:rgba(212,175,55,.1);
+  border-color:rgba(212,175,55,.25);
+}
+.feat-text h4{
+  font-family:'Barlow Condensed';font-size:.9rem;font-weight:800;
+  letter-spacing:.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.85);margin-bottom:.2rem;
+}
+.feat-text p{font-size:.72rem;color:rgba(255,255,255,.35);line-height:1.5}
+
+/* ── TICKER ── */
+.ticker-wrap{
+  width:100%;overflow:hidden;
+  background:linear-gradient(90deg,var(--dark),rgba(212,175,55,.06),var(--dark));
+  border-top:1px solid rgba(212,175,55,.12);
+  border-bottom:1px solid rgba(212,175,55,.12);
+  padding:.5rem 0;margin-bottom:2.5rem;
+}
+.ticker-inner{
+  display:flex;align-items:center;gap:2rem;
+  white-space:nowrap;
+  animation:ticker 22s linear infinite;
+  font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;
+  color:rgba(212,175,55,.5);
+}
+@keyframes ticker{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+.ticker-dot{color:var(--gold);font-size:1.2rem}
+
+/* ── FOOTER ── */
+.foot{
+  width:100%;max-width:680px;
+  text-align:center;
+  border-top:1px solid var(--border);
+  padding-top:1.5rem;
+  font-size:.7rem;color:rgba(255,255,255,.2);
+  letter-spacing:1px;
+}
+.foot a{color:rgba(212,175,55,.5);text-decoration:none}
+.foot a:hover{color:var(--gold)}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .features{grid-template-columns:1fr}
+  .hero-title{font-size:clamp(3rem,18vw,5rem)}
+  .stat-row{gap:.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+<div class="pitch-lines"></div>
+
+<div class="wrap">
+
+  <!-- HEADER BAND -->
+  <header class="hdr">
+    <span class="hdr-badge">Prime eFootball League</span>
+    <span class="hdr-status"><span class="live-dot"></span>Season Active</span>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap reveal">
+    <div class="ticker-inner">
+      <span class="ticker-dot">★</span>
+      <span>PFL ZONE</span>
+      <span class="ticker-dot">·</span>
+      <span>PRIME EFOOTBALL LEAGUE</span>
+      <span class="ticker-dot">·</span>
+      <span>LIVE STANDINGS &amp; RESULTS</span>
+      <span class="ticker-dot">·</span>
+      <span>SEASON IN PROGRESS</span>
+      <span class="ticker-dot">·</span>
+      <span>PFL ZONE</span>
+      <span class="ticker-dot">·</span>
+      <span>PRIME EFOOTBALL LEAGUE</span>
+      <span class="ticker-dot">·</span>
+      <span>LIVE STANDINGS &amp; RESULTS</span>
+      <span class="ticker-dot">·</span>
+      <span>SEASON IN PROGRESS</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="trophy-wrap">
+      <div class="trophy-ring"></div>
+      <div class="trophy-ring2"></div>
+      <div class="trophy-icon">🏆</div>
+    </div>
+
+    <div class="season-tag">Tournament Hub</div>
+
+    <h1 class="hero-title">
+      <span class="line1">PFL</span>
+      <span class="line2">ZONE</span>
+    </h1>
+
+    <p class="hero-sub">Prime eFootball League</p>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">The official home of competitive eFootball — live standings, results, fixtures and playoff brackets all in one place.</p>
+
+    <!-- STATS -->
+    <div class="stat-row">
+      <div class="stat-pill">
+        <span class="sp-val" id="sp-teams">—</span>
+        <span class="sp-lbl">Teams</span>
+      </div>
+      <div class="stat-pill">
+        <span class="sp-val" id="sp-played">—</span>
+        <span class="sp-lbl">Played</span>
+      </div>
+      <div class="stat-pill">
+        <span class="sp-val" id="sp-goals">—</span>
+        <span class="sp-lbl">Goals</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-group">
+      <a href="index.html" class="btn-main">
+        ⚡ View Live Standings
+        <span class="arr">→</span>
+      </a>
+      <a href="admin.html" class="btn-ghost">
+        ⚙ Admin
+      </a>
+    </div>
+
+  </section>
+
+  <!-- FEATURES -->
+  <div class="features reveal">
+    <div class="feat" style="--feat-color:var(--gold)">
+      <div class="feat-icon">📊</div>
+      <div class="feat-text">
+        <h4>Live Table</h4>
+        <p>Real-time standings with GD, form & zone colours</p>
+      </div>
+    </div>
+    <div class="feat" style="--feat-color:var(--green)">
+      <div class="feat-icon">✅</div>
+      <div class="feat-text">
+        <h4>Results</h4>
+        <p>Full match history by round, updated instantly</p>
+      </div>
+    </div>
+    <div class="feat" style="--feat-color:var(--blue)">
+      <div class="feat-icon">📅</div>
+      <div class="feat-text">
+        <h4>Fixtures</h4>
+        <p>Upcoming matches across all matchdays</p>
+      </div>
+    </div>
+    <div class="feat" style="--feat-color:var(--red)">
+      <div class="feat-icon">🏆</div>
+      <div class="feat-text">
+        <h4>Playoffs</h4>
+        <p>Live bracket with automatic advancement</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="foot reveal">
+    <p>© 2026 PFL Zone · <a href="admin.html">Admin Login</a></p>
+    <p style="margin-top:.4rem;opacity:.5">Not affiliated with Konami Digital Entertainment</p>
+  </footer>
+
+</div>
+
+<!-- Firebase for live stats -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyA-aPVuy1q8VBT7Utbn374EdQM3CpCrY0I",
+  authDomain:"prime-efootball-league-pfl.firebaseapp.com",
+  projectId:"prime-efootball-league-pfl",
+  storageBucket:"prime-efootball-league-pfl.appspot.com",
+  messagingSenderId:"YOUR_SENDER_ID",
+  appId:"YOUR_APP_ID",
+  databaseURL:"https://prime-efootball-league-pfl-default-rtdb.firebaseio.com"
+});
+
+// Pull live stats from Firebase
+firebase.database().ref('tournaments').once('value').then(function(snap){
+  var data=snap.val();
+  if(!data)return;
+  var tours=Object.values(data);
+  var teams=0,played=0,goals=0;
+  tours.forEach(function(t){
+    if(t.status==='finished')return;
+    teams=Math.max(teams,(t.teams||[]).length);
+    (t.matches||[]).forEach(function(m){
+      if(m.done){
+        played++;
+        goals+=(m.homeScore||0)+(m.awayScore||0);
+      }
+    });
+  });
+  if(teams) document.getElementById('sp-teams').textContent=teams;
+  if(played) document.getElementById('sp-played').textContent=played;
+  if(goals) document.getElementById('sp-goals').textContent=goals;
+}).catch(function(){});
+
+// Scroll reveal
+var revEls=document.querySelectorAll('.reveal');
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.1});
+revEls.forEach(function(el){ obs.observe(el); });
+// Trigger elements already in view
+setTimeout(function(){
+  revEls.forEach(function(el){
+    var r=el.getBoundingClientRect();
+    if(r.top<window.innerHeight) el.classList.add('visible');
+  });
+},100);
+</script>
+</body>
+</html>
