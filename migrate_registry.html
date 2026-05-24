@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jalala Zone — Migrate Teams to Registry</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:#0b0b14;color:#f0f0f0;padding:1.5rem;min-height:100vh}
+h1{color:#d4af37;font-size:1.4rem;margin-bottom:.4rem}
+.sub{color:#777;font-size:.82rem;margin-bottom:1.5rem;line-height:1.6}
+.card{background:#13131f;border:1px solid #252538;border-radius:10px;padding:1.2rem;margin-bottom:1rem}
+.card-title{color:#d4af37;font-size:1rem;font-weight:800;margin-bottom:.8rem;text-transform:uppercase;letter-spacing:1px}
+.info{background:rgba(212,175,55,.08);border-left:3px solid #d4af37;padding:.8rem 1rem;border-radius:6px;font-size:.83rem;color:#999;line-height:1.6;margin-bottom:1rem}
+.info strong{color:#d4af37}
+.btn{width:100%;padding:.9rem;border:none;border-radius:8px;font-size:.95rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-bottom:.6rem}
+.btn-gold{background:#d4af37;color:#000}.btn-gold:hover{background:#f0cf6a}
+.btn-gold:disabled{background:#555;color:#999;cursor:not-allowed}
+.btn-outline{background:transparent;border:1.5px solid #d4af37;color:#d4af37}
+.log{background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:1rem;min-height:120px;font-size:.8rem;line-height:1.8;font-family:monospace;white-space:pre-wrap;max-height:400px;overflow-y:auto}
+.ok{color:#06ffa5}.err{color:#ff3355}.warn{color:#ffa300}.muted{color:#666}
+.team-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #252538;font-size:.85rem}
+.team-row:last-child{border-bottom:none}
+.badge{font-size:.62rem;font-weight:800;padding:.1rem .4rem;border-radius:3px;background:rgba(6,255,165,.15);color:#06ffa5}
+.badge.skip{background:rgba(255,163,0,.15);color:#ffa300}
+#progress{display:none;margin-top:.8rem}
+.progress-bar{height:8px;background:#252538;border-radius:4px;overflow:hidden;margin-bottom:.4rem}
+.progress-fill{height:100%;background:#d4af37;border-radius:4px;transition:width .3s;width:0%}
+.progress-label{font-size:.75rem;color:#777;text-align:center}
+</style>
+</head>
+<body>
+
+<h1>🔄 Migrate Teams to Registry</h1>
+<p class="sub">This tool reads all teams from your existing Jalala Zone tournaments and saves them to the Teams Registry so they appear in the public Teams tab and the admin "Pick from Registry" dropdown.</p>
+
+<div class="card">
+  <div class="card-title">ℹ️ What this does</div>
+  <div class="info">
+    <strong>Safe to run multiple times</strong> — it won't create duplicates. Teams already in the registry are skipped.<br><br>
+    <strong>It copies:</strong> Team name, Coach name<br>
+    <strong>It does NOT change:</strong> Any match results, points, standings, or tournament data.
+  </div>
+  <button class="btn btn-gold" id="scanBtn" onclick="scanTeams()">🔍 SCAN TOURNAMENTS</button>
+  <div id="scanResults" style="display:none">
+    <div id="teamPreview"></div>
+    <div id="progress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">Migrating...</div>
+    </div>
+    <button class="btn btn-gold" id="migrateBtn" onclick="migrateAll()" style="margin-top:.8rem">✅ MIGRATE ALL TEAMS TO REGISTRY</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📋 Log</div>
+  <div class="log" id="log"><span class="muted">Waiting for scan...</span></div>
+</div>
+
+<div style="text-align:center;margin-top:1rem">
+  <a href="admin_dashboard.html" style="color:#d4af37;font-size:.85rem;text-decoration:none">← Back to Admin Dashboard</a>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// Jalala Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCYHVDq8D492xais1q06ra4GtzNawpsNEA",
+  authDomain: "jalala-zone.firebaseapp.com",
+  projectId: "jalala-zone",
+  storageBucket: "jalala-zone.firebasestorage.app",
+  messagingSenderId: "1017844260648",
+  appId: "1:1017844260648:web:6273826b83aa86fe37fa1d",
+  databaseURL: "https://jalala-zone-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let teamsToMigrate = [];
+let existingRegistry = {};
+
+function log(msg, type='') {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  line.className = type;
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('log').innerHTML = '';
+}
+
+window.scanTeams = async function() {
+  clearLog();
+  document.getElementById('scanBtn').disabled = true;
+  document.getElementById('scanBtn').textContent = '🔄 Scanning...';
+  document.getElementById('scanResults').style.display = 'none';
+  teamsToMigrate = [];
+
+  log('📡 Connecting to Firebase...', 'muted');
+
+  try {
+    // Load existing registry
+    const regSnap = await get(ref(db, 'registry'));
+    existingRegistry = regSnap.val() || {};
+    const existingNames = Object.values(existingRegistry).map(t => t.name.trim().toLowerCase());
+    log(`✅ Registry loaded — ${Object.keys(existingRegistry).length} teams already registered`, 'ok');
+
+    // Load all tournaments
+    const tourSnap = await get(ref(db, 'tournaments'));
+    const tours = tourSnap.val();
+    if (!tours) { log('⚠ No tournaments found in Firebase', 'warn'); reset(); return; }
+
+    const tourList = Object.values(tours);
+    log(`📋 Found ${tourList.length} tournament(s)`, 'ok');
+
+    const seen = new Set(existingNames);
+    let newCount = 0, skipCount = 0;
+
+    tourList.forEach(tour => {
+      const teams = tour.teams || [];
+      log(`\n🏆 "${tour.name}" — ${teams.length} teams`, 'muted');
+      teams.forEach(t => {
+        const nameLower = (t.name || '').trim().toLowerCase();
+        if (!nameLower) return;
+        if (seen.has(nameLower)) {
+          log(`  ⏭ Skip (already exists): ${t.name}`, 'warn');
+          skipCount++;
+        } else {
+          log(`  ➕ New: ${t.name}${t.coach ? ' — coach: ' + t.coach : ''}`, 'ok');
+          teamsToMigrate.push({
+            id: 'reg_' + Date.now() + '_' + Math.floor(Math.random()*9999),
+            name: t.name.trim(),
+            coach: t.coach || '',
+            badge: '⚽',
+            dateCreated: new Date().toISOString().slice(0, 10)
+          });
+          seen.add(nameLower);
+          newCount++;
+        }
+      });
+    });
+
+    log(`\n📊 Summary: ${newCount} new teams to add, ${skipCount} already in registry`, newCount > 0 ? 'ok' : 'warn');
+
+    // Show preview
+    const preview = document.getElementById('teamPreview');
+    if (!teamsToMigrate.length) {
+      preview.innerHTML = '<div style="padding:.8rem;color:#06ffa5;font-size:.85rem;text-align:center">✅ All teams are already in the registry — nothing to migrate!</div>';
+      document.getElementById('scanResults').style.display = 'block';
+      document.getElementById('migrateBtn').style.display = 'none';
+    } else {
+      preview.innerHTML = `
+        <div style="font-size:.8rem;color:#777;margin-bottom:.6rem">${teamsToMigrate.length} team(s) will be added to registry:</div>
+        ${teamsToMigrate.map(t => `
+          <div class="team-row">
+            <div>
+              <div style="font-weight:800">${t.name}</div>
+              <div style="font-size:.72rem;color:#777">${t.coach ? '🧢 ' + t.coach : 'No coach'}</div>
+            </div>
+            <span class="badge">NEW</span>
+          </div>`).join('')}`;
+      document.getElementById('scanResults').style.display = 'block';
+      document.getElementById('migrateBtn').style.display = 'block';
+    }
+
+  } catch(e) {
+    log('❌ Error: ' + e.message, 'err');
+  }
+
+  reset();
+};
+
+window.migrateAll = async function() {
+  if (!teamsToMigrate.length) { log('Nothing to migrate', 'warn'); return; }
+
+  const btn = document.getElementById('migrateBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Migrating...';
+
+  const prog = document.getElementById('progress');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  prog.style.display = 'block';
+
+  log('\n🚀 Starting migration...', 'ok');
+  let done = 0;
+
+  for (const team of teamsToMigrate) {
+    try {
+      await set(ref(db, 'registry/' + team.id), team);
+      done++;
+      const pct = Math.round((done / teamsToMigrate.length) * 100);
+      fill.style.width = pct + '%';
+      label.textContent = `${done} / ${teamsToMigrate.length} teams saved`;
+      log(`  ✅ Saved: ${team.name}`, 'ok');
+    } catch(e) {
+      log(`  ❌ Failed: ${team.name} — ${e.message}`, 'err');
+    }
+  }
+
+  fill.style.width = '100%';
+  label.textContent = `✅ Done — ${done} teams migrated`;
+  log(`\n🎉 Migration complete! ${done}/${teamsToMigrate.length} teams added to registry.`, 'ok');
+  log('You can now close this page and refresh your admin dashboard.', 'muted');
+
+  btn.textContent = '✅ MIGRATION COMPLETE';
+  btn.style.background = '#06ffa5';
+  btn.style.color = '#000';
+};
+
+function reset() {
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = false;
+  btn.textContent = '🔍 SCAN TOURNAMENTS';
+}
+</script>
+</body>
+</html>
